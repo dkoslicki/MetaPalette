@@ -145,7 +145,7 @@ input = [x[i] for i in range(len(x))]
 fid.close()
 
 if not os.path.isfile(os.path.join(data_dir,"Taxonomy.txt")):
-	print("Error: Missing taxonomy file: %s" % os.path.join(data_dir,"FileNames.txt"))
+	print("Error: Missing taxonomy file: %s" % os.path.join(data_dir,"Taxonomy.txt"))
 	sys.exit(2)
 
 #Next, read in the taxonomy file
