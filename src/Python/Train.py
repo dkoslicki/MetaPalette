@@ -1,0 +1,154 @@
+#This is a python clone of the julia script Train.jl
+import os, sys, shutil, subprocess, getopt
+from itertools import *
+from multiprocessing import Pool, freeze_support
+import numpy as np
+import h5py
+
+#python Train.py -i /data/temp/Data/FileNamesFullPath10.txt -o /nfs1/Koslicki_Lab/koslickd/CommonKmers/Python/Output -b /nfs1/Koslicki_Lab/koslickd/Bcalm/bcalm/./bcalm -r /data/temp -j /home/pi/koslickd/jellyfish-2.2.3/bin/./jellyfish -c /nfs1/Koslicki_Lab/Backup/koslickd/CAMI/CommonKmers/src/CountInFile/./count_in_file -t 48 -k 30
+
+
+bcalm_binary = 'bcalm'
+jellyfish_binary = 'jellyfish'
+count_in_file_binary ='count_in_file'
+chunk_size = 1000
+try:
+	opts, args = getopt.getopt(sys.argv[1:],"hi:o:b:r:j:c:t:k:",["Help=","InputListOfFiles=","OutputFolder=", "BcalmBinary=","RamdiskLocation=","JellyfishBinary=","CountInFileBinary=","Threads=","KmerCountingThreads="])
+except getopt.GetoptError:
+	print 'Unknown option, call using: python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads>'
+	sys.exit(2)
+for opt, arg in opts:
+	if opt == '-h':
+		print 'python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads>'
+		sys.exit(2)
+	elif opt in ("-i", "--InputListOfFiles"):
+		input_files = arg
+	elif opt in ("-o", "--OutputFolder"):
+		output_folder = arg
+	elif opt in ("-b","--BcalmBinary"):
+		bcalm_binary = arg
+	elif opt in ("-r", "--RamdiskLocation"):
+		ramdisk_location = arg
+	elif opt in ("-j", "--JellyfishBinary"):
+		jellyfish_binary = arg
+	elif opt in ("-c", "--CountInFileBinary"):
+		count_in_file_binary = arg
+	elif opt in ("-t", "--Threads"):
+		num_threads = int(arg)
+	elif opt in ("-k", "--KmerCountingThreads"):
+		kmer_counting_threads = int(arg) 
+
+#These are the kmer sizes to train on
+kmer_sizes = [30,50]
+
+#Read in file names
+fid = open(input_files,'r')
+file_names = fid.readlines()
+fid.close()
+file_names = [name.strip() for name in file_names]
+
+#Form k-mer counts in parallel
+if os.path.exists(os.path.join(output_folder,"Counts")):
+	shutil.rmtree(os.path.join(output_folder,"Counts"))
+os.makedirs(os.path.join(output_folder,"Counts"))
+
+#Can put automatic decompression here
+def count_kmers(file, kmer_size):
+	cmd = jellyfish_binary + " count " + file + " -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
+	test = subprocess.check_call(cmd, shell = True)
+
+def count_kmers_star(arg):
+	return count_kmers(*arg)
+
+pool = Pool(processes = kmer_counting_threads)
+
+#Count k-mers
+for kmer_size in kmer_sizes:
+	res = pool.map(count_kmers_star, izip(file_names, repeat(kmer_size)));
+
+#Now to form the common kmer matrix
+def count_in_file(file_tuple, kmer_size):
+	cmd = count_in_file_binary + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[0]))+"-"+str(kmer_size)+"mers.jf" + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[1]))+"-"+str(kmer_size)+"mers.jf"
+	test = subprocess.check_output(cmd, shell = True)
+	return test
+
+def count_in_file_star(arg):
+	return count_in_file(*arg)
+
+
+#Make the CKM's but chunk the indices into sublocks so we don't get a bunch of thrashing/memory issues
+num_files = len(file_names)
+for kmer_size in kmer_sizes:
+	ckm = np.zeros((num_files,num_files),dtype=np.int64)
+	for j in range(0,num_files+chunk_size,chunk_size):
+		for i in range(0,num_files+chunk_size,chunk_size):
+			if i>=j:
+				file_tuples = list()
+				iijjs = list()
+				for ii in range(i,i+chunk_size):
+					if ii<num_files:
+						for jj in range(j,j+chunk_size):
+							if jj<num_files:
+								file_tuples.append((file_names[ii],file_names[jj]))
+								iijjs.append((ii,jj))
+				pool.close()
+				pool = Pool(processes = num_threads)
+				res = pool.map(count_in_file_star, izip(file_tuples, repeat(kmer_size)));
+				#Turn the result into the Common Kmer Matrix
+				iter = 0
+				for ii,jj in iijjs:
+					str_split = res[iter].split()
+					ckm[ii,jj] = int(str_split[1]) #A_{i,j} = kmers in genome j common between i and j.
+					ckm[jj,ii] = int(str_split[0])
+					iter = iter + 1
+	#Save the ckm matrices
+	fid = h5py.File(os.path.join(output_folder,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'w')
+	dset = fid.create_dataset("common_kmers", data=ckm)
+	fid.close()
+
+#Form the bcalms
+#Single file bcalm function
+counts_folder = os.path.join(output_folder,"Counts")
+def form_bcalms(input_file, output_folder_bcalm, bcalm_binary, ramdisk_location, jellyfish_binary, counts_directory):
+	input_file = os.path.basename(input_file)
+	#Make temporary directory
+	if os.path.exists(os.path.join(ramdisk_location,input_file)):
+		shutil.rmtree(os.path.join(ramdisk_location,input_file))
+	os.makedirs(os.path.join(ramdisk_location,input_file))
+	#Make .dot file
+	cmd = jellyfish_binary +" dump "+os.path.join(counts_folder,input_file+"-30mers.jf")+" -c -t | cut -f 1 | tr '[:upper:]' '[:lower:]' | sed 's/$/;/g' > " + os.path.join(ramdisk_location,input_file,input_file+"-30mers.dot")
+	temp = subprocess.check_call(cmd, shell = True)
+	#Run Bcalm
+	working_dir = os.getcwd()
+	os.chdir(os.path.join(ramdisk_location,input_file))
+	cmd = bcalm_binary +" "+ input_file +"-30mers.dot " + input_file + "-30mers.bcalm 5"
+	FNULL = open(os.devnull, 'w')
+	temp = subprocess.check_call(cmd, shell = True, stdout=FNULL)
+	FNULL.close()
+	#Move the file and delete the temp directory
+	os.chdir(working_dir)
+	cmd = "cat " + os.path.join(ramdisk_location, input_file, input_file+"-30mers.bcalm") + " | sed 's/;//g' | tr '[:lower:]' '[:upper:]'| sed 's/^/>seq\\n/g' > " + os.path.join(output_folder_bcalm,input_file+"-30mers.bcalm.fa")
+	temp = subprocess.check_call(cmd, shell = True)
+	shutil.rmtree(os.path.join(ramdisk_location, input_file))
+
+def form_bcalms_star(arg):
+	return form_bcalms(*arg)
+
+#compute bcalms in parallel
+if os.path.exists(os.path.join(output_folder,"Bcalms")):
+	shutil.rmtree(os.path.join(output_folder,"Bcalms"))
+os.makedirs(os.path.join(output_folder,"Bcalms"))
+pool = Pool(processes = kmer_counting_threads)
+res = pool.map(form_bcalms_star, izip(file_names, repeat(os.path.join(output_folder,"Bcalms")), repeat(bcalm_binary), repeat(ramdisk_location), repeat(jellyfish_binary), repeat(os.path.join(output_folder,"Counts"))))
+pool.close()
+
+#Remove counts
+#shutil.rmtree(counts_folder)
+
+#Make FileNames.txt file
+fid = open(os.path.join(output_folder,"FileNames.txt"),'w')
+for file in file_names:
+	fid.write(file+"\n")
+fid.close()
+
+
