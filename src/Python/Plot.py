@@ -123,7 +123,7 @@ if taxon == "species":
 		train_indicies = list()
 		for tax_path in tax_paths:
 			tax_names = tax_path.split("|")
-			for tax_name in tax_name:
+			for tax_name in tax_names:
 				temp = "_".join(tax_name.split("_")[3:])
 				if temp == specie:
 					train_indicies.append(tax_paths.index(tax_path))
