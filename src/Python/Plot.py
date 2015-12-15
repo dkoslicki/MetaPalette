@@ -62,7 +62,8 @@ if not os.path.isfile(os.path.join(data_dir,"Taxonomy.txt")):
 fid = open(os.path.join(data_dir,"Taxonomy.txt"),"r")
 taxonomy = []
 for line in fid:
-	taxonomy.append(line.strip().split()[0])
+	temp = line.strip().split()[0]
+	taxonomy.append("_".join(temp.split("_")[1:]))
 
 fid.close()
 
