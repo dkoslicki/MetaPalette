@@ -140,7 +140,7 @@ if taxon == "species":
 			CKM_matrices_reduced.append(CKM_matrices[0][select_indicies,:][:,select_indicies])
 			CKM_matrices_reduced.append(CKM_matrices[1][select_indicies,:][:,select_indicies])
 			organism_names_reduced = [organism_names[i] for i in select_indicies]
-			Y_norms_reduced = list
+			Y_norms_reduced = list()
 			Y_norms_reduced.append(Y_norms[0][select_indicies])
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
 			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
