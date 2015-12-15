@@ -60,10 +60,12 @@ if not os.path.isfile(os.path.join(data_dir,"Taxonomy.txt")):
 
 #Next, read in the taxonomy file
 fid = open(os.path.join(data_dir,"Taxonomy.txt"),"r")
-taxonomy = []
+organism_names = []
+tax_paths = []
 for line in fid:
 	temp = line.strip().split()[0]
-	taxonomy.append("_".join(temp.split("_")[1:]))
+	organism_names.append("_".join(temp.split("_")[1:]))
+	tax_paths.append(line.strip().split()[2])
 
 fid.close()
 
@@ -76,7 +78,7 @@ fid = open(os.path.join(profile_folder, input_file_basename+".profile"))
 species = list()
 genera = list()
 for line in fid:
-	if line[0]!="@" and line[0]!="#":
+	if line[0]!="@" and line[0]!="#" and line!="\n":
 		name = line.strip().split()[1]
 		tax_path = line.strip().split()[3]
 		if name=="species":
@@ -84,8 +86,8 @@ for line in fid:
 		elif name=="genus":
 			genera.append(tax_path.split("|")[-1])
 
-print(species)
-print(genera)
+species = list(set(species))
+genera = list(set(genera))
 
 #Read in Y_norms
 Y_norms = list()
@@ -111,26 +113,29 @@ for kmer_size in kmer_sizes:
 	fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
 	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
 
+
+
+
+
+if taxon == "species":
+	for name in species:
+		pass
+	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
+elif taxon == "genus":
+	pass
+	#Read in the y30 file, find the basis, split into genus chunks, do the plot for each species
+else:
+	pass
+	#Select only the organisms of interest, get the basis, reduce the CKM matrices, then do plot
+
+	
+	
 #Do the classification
-x = ClassifyPackage.Classify(taxonomy, CKM_matrices, Y_norms)
+x = ClassifyPackage.Classify(organism_names, CKM_matrices, Y_norms)
 
 #Make the tree and export it###############
 outfile = os.path.join(output_folder, input_file_basename+"-testout.png")
-PlotPackage.MakePlot(x, taxonomy, CKM_matrices[0], CKM_matrices[1], outgroup, outfile)
-
-
-
-#if taxon == "species":
-#	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
-#elif: taxon == "genus":
-#	#Read in the y30 file, find the basis, split into genus chunks, do the plot for each species
-#else:
-#	#Select only the organisms of interest, get the basis, reduce the CKM matrices, then do plot
-
-	
-	
-	
-	
+PlotPackage.MakePlot(x, organism_names, CKM_matrices[0], CKM_matrices[1], outgroup, outfile)
 	
 	
 	
