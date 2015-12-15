@@ -115,8 +115,7 @@ for kmer_size in kmer_sizes:
 
 
 
-
-
+print(species)
 if taxon == "species":
 	for specie in species:
 		#select all the training organisms of this same species
