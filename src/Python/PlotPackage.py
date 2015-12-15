@@ -201,7 +201,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 			percent = hyp_node_names[node.name][1]
 			if node_base_name in org_names:
 				idx = hyp_node_names[node.name][2]
-				size = x[org_names.index(node_base_name)+(idx+1)*len(x_file_names)]
+				size = x[org_names.index(node_base_name)+(idx+1)*len(org_names)]
 				F = CircleFace(radius=size_factor*math.sqrt(size), color="RoyalBlue", style="sphere")
 				F.border.width = None
 				F.opacity = 0.6
