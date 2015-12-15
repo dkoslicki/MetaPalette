@@ -164,6 +164,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	else:
 		print("WARNING: the chosen outgroup " + outgroup + " is not in the given taxonomy: ")
 		print(names)
+		print("Proceeding without setting an outgroup. This may cause results to be uninterpretable.")
 
 	#Insert hypothetical nodes
 	hyp_node_names = dict()
