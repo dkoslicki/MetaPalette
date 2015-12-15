@@ -27,7 +27,7 @@ import os, sys, shutil, subprocess, getopt
 outgroup = "Halobacterium_sp_DL1"
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:],"hd:o:p:i:t:g",["Help=", "DataDir=", "OutputFolder=", "ProfileDir=", "InputFileName=", "Taxon=", "Outgroup="])
+	opts, args = getopt.getopt(sys.argv[1:],"hd:o:p:i:t:g:",["Help=", "DataDir=", "OutputFolder=", "ProfileDir=", "InputFileName=", "Taxon=", "Outgroup="])
 except getopt.GetoptError:
 	print 'Unknown option, call using: python Plot.py -d <DataDir> -o <OutputFolder> -p <ProfileDir> -i <InputFileName> -t <Taxon> -g <Outgroup>'
 	sys.exit(2)
