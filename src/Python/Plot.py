@@ -69,6 +69,13 @@ for line in fid:
 
 fid.close()
 
+#Check if outgroup is in the taxonomy
+if outgroup not in organism_names:
+	print("Error: outgroup " + outgroup + " is not one of the organisms in " + os.path.join(data_dir,"Taxonomy.txt"))
+	sys.exit(2)
+else:
+	outgroup_index = organism_names.index(outgroup)
+
 #Read in the .profile file
 if not os.path.isfile(os.path.join(profile_folder, input_file_basename+".profile")):
 	print("Error: Missing profile file: " + os.path.join(profile_folder, input_file_basename+".profile"))
@@ -114,19 +121,26 @@ for kmer_size in kmer_sizes:
 	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
 
 
-
 print(species)
 if taxon == "species":
 	for specie in species:
 		#select all the training organisms of this same species
-		train_indicies = list()
+		select_indicies = list()
 		for tax_path in tax_paths:
 			tax_names = tax_path.split("|")
 			for tax_name in tax_names:
-				temp = "_".join(tax_name.split("_")[3:])
-				if temp == specie:
-					train_indicies.append(tax_paths.index(tax_path))
-		print(train_indicies)
+				if tax_name[0]=="s":
+					temp = "_".join(tax_name.split("_")[3:])
+					if temp == specie:
+						select_indicies.append(tax_paths.index(tax_path))
+		if select_indicies: #It's not empty
+			select_indicies.append(outgroup_index)
+			CKM_matrices_reduced = list()
+			CKM_matrices_reduced.append(CKM_matrices[0][select_indicies,:][:,select_indicies])
+			CKM_matrices_reduced.append(CKM_matrices[1][select_indicies,:][:,select_indicies])
+			x = ClassifyPackage.Classify(organism_names[select_indicies], CKM_matrices_reduced, Y_norms[select_indicies])
+			outfile = os.path.join(output_folder, input_file_basename+"-"+specie+".png")
+			PlotPackage.MakePlot(x, organism_names[select_indicies], CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
 	pass
@@ -138,11 +152,11 @@ else:
 	
 	
 #Do the classification
-x = ClassifyPackage.Classify(organism_names, CKM_matrices, Y_norms)
+#x = ClassifyPackage.Classify(organism_names, CKM_matrices, Y_norms)
 
 #Make the tree and export it###############
-outfile = os.path.join(output_folder, input_file_basename+"-testout.png")
-PlotPackage.MakePlot(x, organism_names, CKM_matrices[0], CKM_matrices[1], outgroup, outfile)
+#outfile = os.path.join(output_folder, input_file_basename+"-testout.png")
+#PlotPackage.MakePlot(x, organism_names, CKM_matrices[0], CKM_matrices[1], outgroup, outfile)
 	
 	
 	
