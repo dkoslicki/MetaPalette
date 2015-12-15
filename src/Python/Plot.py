@@ -88,6 +88,7 @@ x = ClassifyPackage.Classify(taxonomy, CKM_matrices, Y_norms)
 
 #Make the tree and export it###############
 outfile = os.path.join(output_folder, input_file_basename, "-testout.png")
+print(outfile)
 PlotPackage.MakePlot(x, taxonomy, CKM_matrices[0], CKM_matrices[1], outgroup, outfile)
 
 
