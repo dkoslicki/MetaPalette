@@ -126,7 +126,7 @@ if taxon == "species":
 				temp = "_".join(tax_name.split("_")[3:])
 				if temp == specie:
 					train_indicies.append(tax_paths.index(tax_path))
-	print(train_indicies)
+		print(train_indicies)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
 	pass
