@@ -48,6 +48,8 @@ for opt, arg in opts:
 	elif opt in ("-g", "--Outgroup"):
 		outgroup = arg
 
+kmer_sizes=[30,50]
+
 #Get name of the file of interest
 input_file_basename = os.path.basename(input_file_name)
 
