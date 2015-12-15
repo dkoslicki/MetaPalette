@@ -94,6 +94,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	#Construct the tree. Note I could use RapidNJ here, but a few tests have shown that the trees that RapidNJ creates are rubbish.
 	dm = _DistanceMatrix(names, matrix)
 	constructor = DistanceTreeConstructor()
+	print(dm)
 	tree = constructor.nj(dm)
 	t=Tree(tree.format('newick'),format=1)
 	#tree.format('newick')
