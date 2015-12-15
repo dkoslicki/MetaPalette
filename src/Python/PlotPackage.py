@@ -114,9 +114,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 		added_node.add_child(removed_node)
 
 	#Function to insert a node some % along a branch, taking into account the ckm distances and nodes already created in the NJ tree (and what distance their descendants are from everyone else)
-	def insert_hyp_node(t, leaf_name, percent):
-		global ckm_ave_train_dist
-		global org_names
+	def insert_hyp_node(t, leaf_name, percent, ckm_ave_train_dist, org_names):
 		dists = map(lambda y: abs(y-percent), ckm_ave_train_dist[leaf_name])
 		nearby_indicies = list()
 	#	for i in range(len(dists)):
@@ -161,8 +159,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	#ancestor = t.get_common_ancestor("bongori_IP780492","bongori_RKI1373","bongori_CDC270376","bongori_RKI1786","bongori_IP477084","bongori_CEIM46049","bongori_CEIM24450","bongori_RKI1398","bongori_12419_ATCC_43975")
 	#t.set_outgroup(ancestor)
 	#t.set_outgroup(t&'Halobacterium_sp_DL1')
-	print(outgroup)
-	print(names)
 	t.set_outgroup(t&outgroup) #I will need to check that this outgroup is actually one of the names...
 
 	#Insert hypothetical nodes
@@ -175,7 +171,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 		xi = x[i:len(x):len(org_names)]
 		for j in range(1,len(cutoffs)+1):
 			if xi[j]>0:
-				insert_hyp_node(t, org_names[i], cutoffs[j-1])
+				insert_hyp_node(t, org_names[i], cutoffs[j-1],ckm_ave_train_dist, org_names)
 				hyp_node_names[org_names[i]+"_"+str(cutoffs[j-1])] = [org_names[i], cutoffs[j-1], j-1] #in case there are "_" in the file names
 
 
