@@ -133,6 +133,7 @@ if taxon == "species":
 					temp = "_".join(tax_name.split("_")[3:])
 					if temp == specie:
 						select_indicies.append(tax_paths.index(tax_path))
+		print(select_indicies)
 		if select_indicies: #It's not empty
 			select_indicies.append(outgroup_index)
 			CKM_matrices_reduced = list()
