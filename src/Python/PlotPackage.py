@@ -162,7 +162,8 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	if outgroup in names:
 		t.set_outgroup(t&outgroup) #I will need to check that this outgroup is actually one of the names...
 	else:
-		print("WARNING: the chosen outgroup " + outgroup + " is not in the given taxonomy: " + names)
+		print("WARNING: the chosen outgroup " + outgroup + " is not in the given taxonomy: ")
+		print(names)
 
 	#Insert hypothetical nodes
 	hyp_node_names = dict()
