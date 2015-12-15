@@ -131,6 +131,10 @@ else:
 	
 	
 #Do the classification
+print("Length of organism names:")
+print(len(organism_names))
+print("Size of CKM_matrices:")
+print(CKM_matrices[0].shape)
 x = ClassifyPackage.Classify(organism_names, CKM_matrices, Y_norms)
 
 #Make the tree and export it###############
