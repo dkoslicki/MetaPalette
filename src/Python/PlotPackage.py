@@ -74,7 +74,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	names = org_names
 	matrix=list()
 	for i in range(num_rows):
-    	matrix.append([.5*(1-.5*ckm30_norm[i,j]-.5*ckm30_norm[j,i])+.5*(1-.5*ckm50_norm[i,j]-.5*ckm50_norm[j,i]) for j in range(i+1)])
+		matrix.append([.5*(1-.5*ckm30_norm[i,j]-.5*ckm30_norm[j,i])+.5*(1-.5*ckm50_norm[i,j]-.5*ckm50_norm[j,i]) for j in range(i+1)])
 
 	#Read in the training common kmer matrices
 	#f=h5py.File(ckm30_train_file,'r')
