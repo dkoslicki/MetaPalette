@@ -134,7 +134,7 @@ if taxon == "species":
 					if temp == specie:
 						select_indicies.append(tax_paths.index(tax_path))
 		print(select_indicies)
-		if select_indicies: #It's not empty
+		if len(select_indicies)>1: #Have to have more than two organisms to do the plot
 			select_indicies.append(outgroup_index)
 			CKM_matrices_reduced = list()
 			CKM_matrices_reduced.append(CKM_matrices[0][select_indicies,:][:,select_indicies])
