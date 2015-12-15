@@ -159,7 +159,10 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	#ancestor = t.get_common_ancestor("bongori_IP780492","bongori_RKI1373","bongori_CDC270376","bongori_RKI1786","bongori_IP477084","bongori_CEIM46049","bongori_CEIM24450","bongori_RKI1398","bongori_12419_ATCC_43975")
 	#t.set_outgroup(ancestor)
 	#t.set_outgroup(t&'Halobacterium_sp_DL1')
-	t.set_outgroup(t&outgroup) #I will need to check that this outgroup is actually one of the names...
+	if outgroup in names:
+		t.set_outgroup(t&outgroup) #I will need to check that this outgroup is actually one of the names...
+	else:
+		print("WARNING: the chosen outgroup " + outgroup + " is not in the given taxonomy: " + names)
 
 	#Insert hypothetical nodes
 	hyp_node_names = dict()
