@@ -83,7 +83,7 @@ for kmer_size in kmer_sizes:
 x = ClassifyPackage.Classify(taxonomy, CKM_matrices, Y_norms)
 
 #Make the tree and export it###############
-outfile = os.path.join(output_folder, input_file_basename, "testout.png")
+outfile = os.path.join(output_folder, input_file_basename, "-testout.png")
 PlotPackage.MakePlot(x, taxonomy, CKM_matrices[0], CKM_matrices[1], outgroup, outfile)
 
 
