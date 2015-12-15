@@ -67,9 +67,33 @@ for line in fid:
 
 fid.close()
 
+#Read in the .profile file
+if not os.path.isfile(os.path.join(profile_folder, input_file_basename+".profile")):
+	print("Error: Missing profile file: " + os.path.join(profile_folder, input_file_basename+".profile"))
+	print("Please run the Classify.py script and try again")
+	sys.exit(2)
+fid = open(os.path.join(profile_folder, input_file_basename+".profile"))
+species = list()
+genera = list()
+for line in fid:
+	if line[0]!="@" and line[0]!="#":
+		name = line.strip().split()[1]
+		tax_path = line.strip().split()[3]
+		if name=="species":
+			species.append(tax_path.split("|")[-1])
+		elif name=="genus":
+			genera.append(tax_path.split("|")[-1])
+
+print(species)
+print(genera)
+
 #Read in Y_norms
 Y_norms = list()
 for kmer_size in kmer_sizes:
+	if not os.path.isfile(os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt")):
+		print("Error: Missing file " + os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt"))
+		print("Please run the Classify.py script and try again.")
+		sys.exit(2)
 	fid = open(os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt"),'r')
 	Y = fid.readlines()
 	fid.close()
@@ -80,6 +104,10 @@ for kmer_size in kmer_sizes:
 #Read in CKMs
 CKM_matrices = list()
 for kmer_size in kmer_sizes:
+	if not os.path.isfile(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5")):
+		print("Error: Missing file " + os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"))
+		print("Please run the Train.py script (or download the pre-trained data) and try again.")
+		sys.exit(2)
 	fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
 	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
 
