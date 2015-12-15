@@ -118,8 +118,16 @@ for kmer_size in kmer_sizes:
 
 
 if taxon == "species":
-	for name in species:
-		pass
+	for specie in species:
+		#select all the training organisms of this same species
+		train_indicies = list()
+		for tax_path in tax_paths:
+			tax_names = tax_path.split("|")
+			for tax_name in tax_name:
+				temp = "_".join(tax_name.split("_")[3:])
+				if temp == specie:
+					train_indicies.append(tax_paths.index(tax_path))
+	print(train_indicies)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
 	pass
@@ -131,10 +139,6 @@ else:
 	
 	
 #Do the classification
-print("Length of organism names:")
-print(len(organism_names))
-print("Size of CKM_matrices:")
-print(CKM_matrices[0].shape)
 x = ClassifyPackage.Classify(organism_names, CKM_matrices, Y_norms)
 
 #Make the tree and export it###############
