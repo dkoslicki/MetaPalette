@@ -139,9 +139,13 @@ if taxon == "species":
 			CKM_matrices_reduced = list()
 			CKM_matrices_reduced.append(CKM_matrices[0][select_indicies,:][:,select_indicies])
 			CKM_matrices_reduced.append(CKM_matrices[1][select_indicies,:][:,select_indicies])
-			x = ClassifyPackage.Classify(organism_names[select_indicies], CKM_matrices_reduced, Y_norms[select_indicies])
+			organism_names_reduced = [oragnism_names[i] for i in select_indicies]
+			Y_norms_reduced = list
+			Y_norms_reduced[0] = Y_norms[0][select_indicies]
+			Y_norms_reduced[1] = Y_norms[1][select_indicies]
+			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
 			outfile = os.path.join(output_folder, input_file_basename+"-"+specie+".png")
-			PlotPackage.MakePlot(x, organism_names[select_indicies], CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
+			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
 	pass
