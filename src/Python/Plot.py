@@ -147,7 +147,7 @@ if taxon == "species":
 			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
-		for genus in genera:
+	for genus in genera:
 		#select all the training organisms of this same species
 		select_indicies = list()
 		for tax_path in tax_paths:
