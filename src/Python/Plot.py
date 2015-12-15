@@ -121,7 +121,7 @@ for kmer_size in kmer_sizes:
 	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
 
 
-print(species)
+
 if taxon == "species":
 	for specie in species:
 		#select all the training organisms of this same species
@@ -133,7 +133,6 @@ if taxon == "species":
 					temp = "_".join(tax_name.split("_")[3:])
 					if temp == specie:
 						select_indicies.append(tax_paths.index(tax_path))
-		print(select_indicies)
 		if len(select_indicies)>1: #Have to have more than two organisms to do the plot
 			select_indicies.append(outgroup_index)
 			CKM_matrices_reduced = list()
@@ -148,7 +147,28 @@ if taxon == "species":
 			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
-	pass
+		for genus in genera:
+		#select all the training organisms of this same species
+		select_indicies = list()
+		for tax_path in tax_paths:
+			tax_names = tax_path.split("|")
+			for tax_name in tax_names:
+				if tax_name[0]=="g":
+					temp = "_".join(tax_name.split("_")[3:])
+					if temp == genus:
+						select_indicies.append(tax_paths.index(tax_path))
+		if len(select_indicies)>1: #Have to have more than two organisms to do the plot
+			select_indicies.append(outgroup_index)
+			CKM_matrices_reduced = list()
+			CKM_matrices_reduced.append(CKM_matrices[0][select_indicies,:][:,select_indicies])
+			CKM_matrices_reduced.append(CKM_matrices[1][select_indicies,:][:,select_indicies])
+			organism_names_reduced = [organism_names[i] for i in select_indicies]
+			Y_norms_reduced = list()
+			Y_norms_reduced.append(Y_norms[0][select_indicies])
+			Y_norms_reduced.append(Y_norms[1][select_indicies])
+			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
+			outfile = os.path.join(output_folder, input_file_basename+"-"+genus+".png")
+			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
 	#Read in the y30 file, find the basis, split into genus chunks, do the plot for each species
 else:
 	pass
