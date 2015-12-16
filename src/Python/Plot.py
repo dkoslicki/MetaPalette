@@ -37,8 +37,10 @@ for opt, arg in opts:
 		outgroup = arg
 
 kmer_sizes=[30,50]
+#Get name of the file of interest
+input_file_basename = os.path.basename(input_file_name)
 
-#Check input taxon
+#Check for errors
 if taxon!="genus" and taxon!="species":
 	print("Error: taxon (-t) must be either species or genus. Value of " + taxon + " given.")
 	sys.exit(2)
@@ -62,9 +64,6 @@ for kmer_size in kmer_sizes:
 		print("Error: Missing file " + os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"))
 		print("Please run the Train.py script (or download the pre-trained data) and try again.")
 		sys.exit(2)
-
-#Get name of the file of interest
-input_file_basename = os.path.basename(input_file_name)
 
 #Next, read in the taxonomy file
 fid = open(os.path.join(data_dir,"Taxonomy.txt"),"r")
