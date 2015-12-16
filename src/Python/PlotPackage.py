@@ -166,7 +166,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
 	
 	#Redner the XML file
 	project = Phyloxml()
-	phylo = phyloxml.PhyloxmlTree(newick=t.write(format=1, features=[]))
+	phylo = phyloxml.PhyloxmlTree(newick=t.write(format=0, features=[]))
 	project.add_phylogeny(phylo)
 	project.export(open(outfilexml,'w'))
 
