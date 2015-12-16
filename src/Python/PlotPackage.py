@@ -9,7 +9,7 @@ from ete2 import Tree, faces, TreeStyle, COLOR_SCHEMES, TextFace, BarChartFace, 
 import math
 import os
 
-def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
+def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
 
 	#Normalize the x vector
 	x = map(lambda y: y/sum(x),x)
@@ -28,7 +28,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 	for i in range(len(org_names)):
 		ckm_ave_train_dist[org_names[i]] = [.5*ckm_ave_train[i,j]+.5*ckm_ave_train[j,i] for j in range(len(org_names))]
 
-
 	#Construct the tree. Note I could use RapidNJ here, but a few tests have shown that the trees that RapidNJ creates are rubbish.
 	dm = _DistanceMatrix(names, matrix)
 	constructor = DistanceTreeConstructor()
@@ -37,7 +36,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 	#tree.format('newick')
 	#Phylo.draw_ascii(tree)
 
-
 	#Now I will put internal nodes in a certain phylogenetic distance between the root and a given node.
 	#Function to insert a node at a given distance
 	def insert_node(t, name_to_insert, insert_above, dist_along):
@@ -45,7 +43,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 		parent = (t&insert_above).up
 		orig_branch_length = t.get_distance(insert_at_node,parent)
 		if orig_branch_length < dist_along:
-			raise ValueError("error: dist_along larger than orig_branch_length")
+			raise ValueError("error: dist_along larger than orig_branch_length in PlotPackage.py")
 		removed_node = insert_at_node.detach()
 		removed_node.dist = orig_branch_length - dist_along
 		added_node = parent.add_child(name=name_to_insert, dist=dist_along)
@@ -91,7 +89,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 			ancestor_node = (t&child_node.name).up
 		insert_node(t, leaf_name+"_"+str(percent), child_node.name, percent_dist-t.get_distance(t.name, ancestor_node))
 
-
 	#Set outgroup
 	if outgroup in names:
 		t.set_outgroup(t&outgroup) #I will need to check that this outgroup is actually one of the names...
@@ -110,7 +107,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 			if xi[j]>0:
 				insert_hyp_node(t, org_names[i], cutoffs[j-1],ckm_ave_train_dist, org_names)
 				hyp_node_names[org_names[i]+"_"+str(cutoffs[j-1])] = [org_names[i], cutoffs[j-1], j-1] #in case there are "_" in the file names
-
 
 	size_factor=250
 	font_size=55
@@ -163,13 +159,14 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 	F.opacity = 0.6
 	ts.legend.add_face(F,0)
 	ts.legend.add_face(TextFace("  Inferred relative abundance",fsize=1.5*font_size,fgcolor="Blue"),1)
+	ts.legend.add_face(TextFace("  Total absolute abundance depicted " + str(sum_x), fsize=1.5*font_size,fgcolor="Black"),1)
 	ts.legend_position=4
 	#t.show(tree_style=ts)
 	t.render(outfile, w=550, units="mm", tree_style=ts)
 	
 	#Redner the XML file
 	project = Phyloxml()
-	phylo = phyloxml.PhyloxmlTree(newick=t.write(format=0, features=[]))
+	phylo = phyloxml.PhyloxmlTree(newick=t.write(format=1, features=[]))
 	project.add_phylogeny(phylo)
 	project.export(open(outfilexml,'w'))
 

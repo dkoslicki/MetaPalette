@@ -54,18 +54,8 @@ def Classify(training_file_names, CKM_matrices, Y_norms):
 	#populate with the reconstructed frequencies
 	x[column_basis] = xtemp
 
-	#Normalize the result
-	#if normalize or (x.sum()>1):
-	#	x=x/x.sum()
-
 	#return x vector
 	return x
-#	fid = open(os.path.join(output_folder,file_base_name+"-x.txt"),'w')
-#	for i in range(len(x)):
-#		fid.write(str(x[i]) + "\n")
-#
-#	fid.close()
-
 
 
 

@@ -10,20 +10,20 @@ import ClassifyPackage
 
 #python /nfs1/Koslicki_Lab/koslickd/CommonKmers/Python/Scripts/Classify.py -d /nfs1/Koslicki_Lab/koslickd/CommonKmers/Python/Output -o /nfs1/Koslicki_Lab/koslickd/CommonKmers/Python/Output -i /nfs1/Koslicki_Lab/koslickd/CommonKmers/Python/Data/test-reads.fa -k default -j /home/pi/koslickd/jellyfish-2.2.3/bin/./jellyfish -q /nfs1/Koslicki_Lab/Backup/koslickd/CAMI/CommonKmers/src/QueryPerSeq/./query_per_sequence -Q C -y -x -t 48
 
-save_y = False
+#save_y = False
 save_x = False
 quality = 'C'
 re_run = False
 normalize = False
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:],"hd:o:i:k:j:q:Q:yxrnt:",["Help=", "DataDir=","OutputFolder=", "InputFile=", "Kind=", "JellyfishBinary=", "QueryPerSequenceBinary=", "Quality=", "SaveY=", "SaveX=", "ReRun=", "Normalize=", "Threads="])
+	opts, args = getopt.getopt(sys.argv[1:],"hd:o:i:k:j:q:Q:xrnt:",["Help=", "DataDir=","OutputFolder=", "InputFile=", "Kind=", "JellyfishBinary=", "QueryPerSequenceBinary=", "Quality=", "SaveX=", "ReRun=", "Normalize=", "Threads="])
 except getopt.GetoptError:
-	print 'Unknown option, call using: python Classify.py -d <DataDir> -o <OutputFolder> -i <InputFile> -k <Kind> -j <JellyfishBinary> -q <QueryPerSequenceBinary> -Q <Quality> -y <SaveY> -x <SaveX> -r <ReRun> -n <Normalize> -t <Threads>'
+	print 'Unknown option, call using: python Classify.py -d <DataDir> -o <OutputFolder> -i <InputFile> -k <Kind> -j <JellyfishBinary> -q <QueryPerSequenceBinary> -Q <Quality> -x <SaveX Flag> -r <ReRun Flag> -n <Normalize Flag> -t <Threads>'
 	sys.exit(2)
 for opt, arg in opts:
 	if opt == '-h':
-		print 'python Classify.py -d <DataDir> -o <OutputFolder> -i <InputFile> -k <Kind> -j <JellyfishBinary> -q <QueryPerSequenceBinary> -Q <Quality> -y <SaveY> -x <SaveX> -r <ReRun> -n <Normalize> -t <Threads>'
+		print 'python Classify.py -d <DataDir> -o <OutputFolder> -i <InputFile> -k <Kind> -j <JellyfishBinary> -q <QueryPerSequenceBinary> -Q <Quality> -x <SaveX Flag> -r <ReRun Flag> -n <Normalize Flag> -t <Threads>'
 		sys.exit(2)
 	elif opt in ("-d", "--DataDir"):
 		data_dir = arg
@@ -39,8 +39,8 @@ for opt, arg in opts:
 		query_per_sequence_binary = arg
 	elif opt in ("-Q", "--Quality"):
 		quality = arg
-	elif opt in ("-y", "--SaveY"):
-		save_y = True 
+#	elif opt in ("-y", "--SaveY"):
+#		save_y = True 
 	elif opt in ("-x", "--SaveX"):
 		save_x = True 
 	elif opt in ("-r", "--ReRun"):
@@ -50,15 +50,40 @@ for opt, arg in opts:
 	elif opt in ("-t", "--Threads"):
 		num_threads = int(arg) 
 
-
 file_base_name = os.path.basename(input_file_name)
 thresholds=[.90,.80,.70,.60,.50,.40,.30,.20,.10]
 kmer_sizes = [30,50]
+
+#Check args and file existence, etc.
+if not os.path.isfile(input_file_name):
+	print("Error: Input file name " + input_file_name + " does not exist.")
+	sys.exit(2)
+if not os.path.isdir(output_folder):
+	print("Error: Output folder " + output_folder + " does not exist.")
+	sys.exit(2)
+if not os.path.isdir(data_dir):
+	print("Error: Data directory " + data_dir + " does not exist.")
+	sys.exit(2)
+for kmer_size in kmer_sizes:
+	if not os.path.isfile(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5")):
+		print("Error: Missing Common Kmer Matrix file " + os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"))
+		print("Please re-run Train.py or download the pre-trained data")
+		sys.exit(2)
+if not os.path.isfile(os.path.join(data_dir, "FileNames.txt")):
+	print("Error, missing FileNames.txt file in " + data_dir)
+	sys.exit(2)
+if kind!="default" and kind!="sensitive" and kind!="specific":
+	error("invalid kind (-k) option. Options are: default, sensitive, specific")
+	sys.exit(2)
+if not os.path.isfile(os.path.join(data_dir,"Taxonomy.txt")):
+	print("Error: Missing taxonomy file: %s" % os.path.join(data_dir,"Taxonomy.txt"))
+	sys.exit(2)
 
 fid = open(os.path.join(data_dir,"FileNames.txt"),'r')
 training_file_names = list()
 for file in fid:
 	training_file_names.append(os.path.basename(file.strip()))
+	if not os.path.isfile(
 
 #Form the sample jellyfish file
 #Function
@@ -87,7 +112,11 @@ if re_run and all([os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)
 else:
 	#Count the kmers
 	for kmer_size in kmer_sizes:
-		count_kmers(input_file_name, kmer_size)
+		if os.path.isfile(os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")):
+			print("Kmers already counted in file " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"))
+			print("Skipping kmer counting step")
+		else:
+			count_kmers(input_file_name, kmer_size)
 	#Form the y-files
 	for kmer_size in kmer_sizes:
 		pool = Pool(processes = num_threads)
@@ -96,11 +125,10 @@ else:
 		total_kmers = int(subprocess.check_output(jellyfish_binary + " stats " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"), shell = True).split()[5])
 		Y_norm = Y/total_kmers
 		Y_norms.append(Y_norm)
-		if save_y:
-			fid = open(os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt"),'w')
-			for i in range(len(Y_norm)):
-				fid.write(str(Y_norm[i])+"\n")
-			fid.close()
+		fid = open(os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt"),'w')
+		for i in range(len(Y_norm)):
+			fid.write(str(Y_norm[i])+"\n")
+		fid.close()
 
 #Load the common kmer matrices
 CKM_matrices = list()
@@ -139,14 +167,9 @@ else:
 #input = []
 #for line in fid:
 #	input.append(float(line.strip()))
+#fid.close()
 
 input = [x[i] for i in range(len(x))]
-
-fid.close()
-
-if not os.path.isfile(os.path.join(data_dir,"Taxonomy.txt")):
-	print("Error: Missing taxonomy file: %s" % os.path.join(data_dir,"Taxonomy.txt"))
-	sys.exit(2)
 
 #Next, read in the taxonomy file
 fid = open(os.path.join(data_dir,"Taxonomy.txt"),"r")
@@ -330,9 +353,9 @@ output_file_handle.close()
 #################################################################################################
 
 #Clean up files
-for kmer_size in kmer_sizes:
-	if os.path.isfile(os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")):
-		os.remove(os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"))
+#for kmer_size in kmer_sizes:
+#	if os.path.isfile(os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")):
+#		os.remove(os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"))
 
 if not save_x:
 	if os.path.isfile(os.path.join(output_folder,file_base_name+"-x.txt")):

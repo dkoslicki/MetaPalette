@@ -1,6 +1,7 @@
 #This script will generate the tree plots from the inferred profile
 import numpy as np
 import h5py
+import os, sys, shutil, subprocess, getopt
 from Bio import Phylo
 from Bio.Phylo import NewickIO
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
@@ -10,19 +11,6 @@ import math
 import os
 import ClassifyPackage
 import PlotPackage
-import os, sys, shutil, subprocess, getopt
-
-
-#Input
-# Location of CKM files
-# Location of Taxonomy file
-# Location of y-file and .profile file (call it the ProfileDir)
-
-#Options
-# Either generate the tree for a specific taxa, or else do all the species that have inferred abundance
-
-#Output
-# The plots of the individual trees, in a specific directory, with file names given by taxa of interest
 
 outgroup = "Halobacterium_sp_DL1"
 
@@ -50,13 +38,33 @@ for opt, arg in opts:
 
 kmer_sizes=[30,50]
 
-#Get name of the file of interest
-input_file_basename = os.path.basename(input_file_name)
-
-#Parse the taxonomy
+#Check input taxon
+if taxon!="genus" and taxon!="species":
+	print("Error: taxon (-t) must be either species or genus. Value of " + taxon + " given.")
+	sys.exit(2)
+if not os.path.isdir(data_dir):
+	print("Error: Data directory " + data_dir + " does not exist.")
+	sys.exit(2)
 if not os.path.isfile(os.path.join(data_dir,"Taxonomy.txt")):
 	print("Error: Missing taxonomy file: %s" % os.path.join(data_dir,"Taxonomy.txt"))
 	sys.exit(2)
+if not os.path.isfile(os.path.join(profile_folder, input_file_basename+".profile")):
+	print("Error: Missing profile file: " + os.path.join(profile_folder, input_file_basename+".profile"))
+	print("Please run the Classify.py script and try again")
+	sys.exit(2)
+for kmer_size in kmer_sizes:
+	if not os.path.isfile(os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt")):
+		print("Error: Missing file " + os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt"))
+		print("Please run the Classify.py script and try again.")
+		sys.exit(2)
+for kmer_size in kmer_sizes:
+	if not os.path.isfile(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5")):
+		print("Error: Missing file " + os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"))
+		print("Please run the Train.py script (or download the pre-trained data) and try again.")
+		sys.exit(2)
+
+#Get name of the file of interest
+input_file_basename = os.path.basename(input_file_name)
 
 #Next, read in the taxonomy file
 fid = open(os.path.join(data_dir,"Taxonomy.txt"),"r")
@@ -76,11 +84,7 @@ if outgroup not in organism_names:
 else:
 	outgroup_index = organism_names.index(outgroup)
 
-#Read in the .profile file
-if not os.path.isfile(os.path.join(profile_folder, input_file_basename+".profile")):
-	print("Error: Missing profile file: " + os.path.join(profile_folder, input_file_basename+".profile"))
-	print("Please run the Classify.py script and try again")
-	sys.exit(2)
+#Read in the .profile file, concentrate on organisms that were actually classified to
 fid = open(os.path.join(profile_folder, input_file_basename+".profile"))
 species = list()
 genera = list()
@@ -99,29 +103,19 @@ genera = list(set(genera))
 #Read in Y_norms
 Y_norms = list()
 for kmer_size in kmer_sizes:
-	if not os.path.isfile(os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt")):
-		print("Error: Missing file " + os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt"))
-		print("Please run the Classify.py script and try again.")
-		sys.exit(2)
 	fid = open(os.path.join(profile_folder,input_file_basename+"-y"+str(kmer_size)+".txt"),'r')
 	Y = fid.readlines()
 	fid.close()
 	Y = np.array(map(lambda y: float(y), Y), dtype=np.float64)
 	Y_norms.append(Y)
 
-
 #Read in CKMs
 CKM_matrices = list()
 for kmer_size in kmer_sizes:
-	if not os.path.isfile(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5")):
-		print("Error: Missing file " + os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"))
-		print("Please run the Train.py script (or download the pre-trained data) and try again.")
-		sys.exit(2)
 	fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
 	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
 
-
-
+#Read find the basis corresponding to the particular taxa, split into taxa chunks, do the plot for each taxa
 if taxon == "species":
 	for specie in species:
 		#select all the training organisms of this same species
@@ -142,11 +136,14 @@ if taxon == "species":
 			Y_norms_reduced = list()
 			Y_norms_reduced.append(Y_norms[0][select_indicies])
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
+			print("Creating NJ tree and plot for " + specie)
 			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
+			sum_x = sum(x)
+			#Normalize the x vector
+			x = map(lambda y: y/sum(x),x)
 			outfile = os.path.join(output_folder, input_file_basename+"-"+specie+".png")
 			outfilexml = os.path.join(output_folder, input_file_basename+"-"+specie+".xml")
-			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile, outfilexml)
-	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
+			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile, outfilexml, sum_x)
 elif taxon == "genus":
 	for genus in genera:
 		#select all the training organisms of this same species
@@ -167,17 +164,15 @@ elif taxon == "genus":
 			Y_norms_reduced = list()
 			Y_norms_reduced.append(Y_norms[0][select_indicies])
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
+			print("Creating NJ tree and plot for " + genus)
 			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
+			sum_x = sum(x)
+			#Normalize the x vector
+			x = map(lambda y: y/sum(x),x)
 			outfile = os.path.join(output_folder, input_file_basename+"-"+genus+".png")
 			outfilexml = os.path.join(output_folder, input_file_basename+"-"+genus+".xml")
-			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile, outfilexml)
-	#Read in the y30 file, find the basis, split into genus chunks, do the plot for each species
-else:
-	pass
-	#Select only the organisms of interest, get the basis, reduce the CKM matrices, then do plot
+			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile, outfilexml, sum_x)
 
-	
-	
 #Do the classification
 #x = ClassifyPackage.Classify(organism_names, CKM_matrices, Y_norms)
 

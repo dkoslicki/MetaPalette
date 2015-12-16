@@ -1,4 +1,3 @@
-#This is a python clone of the julia script Train.jl
 import os, sys, shutil, subprocess, getopt
 from itertools import *
 from multiprocessing import Pool, freeze_support
@@ -41,11 +40,26 @@ for opt, arg in opts:
 #These are the kmer sizes to train on
 kmer_sizes = [30,50]
 
+if not os.path.isdir(output_folder):
+	print("Error: Output folder " + output_folder + " does not exist.")
+	sys.exit(2)
+if not os.path.isfile(input_files):
+	print("Error: List of input files " + input_files + " does not exist.")
+	sys.exit(2)
+if not os.path.isdir(ramdisk_location):
+	print("Error: fast IO device location + " ramdisk_location + " does not exist.")
+	sys.exit(2)
+
 #Read in file names
 fid = open(input_files,'r')
 file_names = fid.readlines()
 fid.close()
 file_names = [name.strip() for name in file_names]
+
+for file_name in file_names:
+	if not os.path.isfile(file_name):
+		print("Error: file " + file_name + " does not exist but given in input file " + input_files)
+		sys.exit(2)
 
 #Form k-mer counts in parallel
 if os.path.exists(os.path.join(output_folder,"Counts")):
@@ -74,7 +88,6 @@ def count_in_file(file_tuple, kmer_size):
 
 def count_in_file_star(arg):
 	return count_in_file(*arg)
-
 
 #Make the CKM's but chunk the indices into sublocks so we don't get a bunch of thrashing/memory issues
 num_files = len(file_names)
