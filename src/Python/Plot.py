@@ -144,7 +144,8 @@ if taxon == "species":
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
 			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
 			outfile = os.path.join(output_folder, input_file_basename+"-"+specie+".png")
-			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
+			outfilexml = os.path.join(output_folder, input_file_basename+"-"+specie+".xml")
+			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile, outfilexml)
 	#Read in the y30 file, find the basis, split into species chunks, do the plot for each species
 elif taxon == "genus":
 	for genus in genera:
@@ -168,7 +169,8 @@ elif taxon == "genus":
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
 			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
 			outfile = os.path.join(output_folder, input_file_basename+"-"+genus+".png")
-			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile)
+			outfile = os.path.join(output_folder, input_file_basename+"-"+genus+".xml")
+			PlotPackage.MakePlot(x, organism_names_reduced, CKM_matrices_reduced[0], CKM_matrices_reduced[1], outgroup, outfile, outfilexml)
 	#Read in the y30 file, find the basis, split into genus chunks, do the plot for each species
 else:
 	pass

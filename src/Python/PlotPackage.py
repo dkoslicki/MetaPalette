@@ -5,68 +5,14 @@ from Bio import Phylo
 from Bio.Phylo import NewickIO
 from Bio.Phylo.TreeConstruction import DistanceTreeConstructor
 from Bio.Phylo.TreeConstruction import _DistanceMatrix
-from ete2 import Tree, faces, TreeStyle, COLOR_SCHEMES, TextFace, BarChartFace, CircleFace, AttrFace, NodeStyle, RectFace
+from ete2 import Tree, faces, TreeStyle, COLOR_SCHEMES, TextFace, BarChartFace, CircleFace, AttrFace, NodeStyle, RectFace, Phyloxml, phyloxml
 import math
 import os
 
-def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
-	#x_file = "../DataForNJTreeWithTrue/test1-reads.fa-x.txt"
-	#grinder_x_file = "../DataForNJTreeWithTrue/test1_grinder-x.txt"
-	#file_name_file = "../DataForNJTreeWithTrue/AllTrainedData/FileNames.txt"
-	#x_file_names_file = "../DataForNJTreeWithTrue/FullFileNames.txt"
-	#ckm30_file = "../DataForNJTreeWithTrue/AllTrainedData/CommonKmerMatrix-30mers.h5"
-	#ckm50_file = "../DataForNJTreeWithTrue/AllTrainedData/CommonKmerMatrix-50mers.h5"
-	#ckm30_train_file = "../DataForNJTreeWithTrue/CommonKmerMatrix-30mers.h5"
-	#ckm50_train_file = "../DataForNJTreeWithTrue/CommonKmerMatrix-50mers.h5"
-	
-	##Read in the x vector
-	#fid = open(x_file,'r')
-	#x = map(lambda y: float(y),fid.readlines())
-	#fid.close()
+def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml):
 
 	#Normalize the x vector
 	x = map(lambda y: y/sum(x),x)
-
-	##Read in the true x vector
-	#fid = open(grinder_x_file,'r')
-	#x_true = map(lambda y: float(y),fid.readlines())
-	#fid.close()
-
-	##Read in the basis for the ckm matrices
-	#file_names = list()
-	#fid = open(file_name_file,'r')
-	#for line in fid:
-	#	#file_names.append(os.path.basename(line.strip()))
-	#	file_names.append(os.path.basename(line.strip()).split('.')[0])
-	#fid.close()
-
-	#Read in the taxonomy
-	#taxonomy = list()
-	#fid = open('CommonKmerTrainingOnAllTestData/Testtaxonomy.txt','r')
-	#for line in fid:
-	#    taxonomy.append('_'.join(line.split()[0].split("_")[1:]))
-	
-	#fid.close()
-
-	#Taxonomy isn't needed for these figures, so just make the taxonomy the file names
-	#taxonomy = file_names
-
-	#Read in the basis for the reconstructed vector
-	#x_file_names = list()
-	#fid = open(x_file_names_file,'r')
-	#for line in fid:
-	#	#x_file_names.append(os.path.basename(line.strip()))
-	#	x_file_names.append(os.path.basename(line.strip()).split('.')[0])
-	#fid.close()
-
-
-	#Read in the common kmer matrix
-	#f=h5py.File(ckm30_file,'r')
-	#ckm30=np.array(f['common_kmers'],dtype=np.float64)
-	#f.close()
-	#f=h5py.File(ckm50_file,'r')
-	#ckm50=np.array(f['common_kmers'],dtype=np.float64)
-	#f.close()
 	ckm30_norm = np.multiply(ckm30,1/np.diag(ckm30))
 	ckm50_norm = np.multiply(ckm50,1/np.diag(ckm50))
 	num_rows = ckm30_norm.shape[0]
@@ -76,15 +22,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	for i in range(num_rows):
 		matrix.append([.5*(1-.5*ckm30_norm[i,j]-.5*ckm30_norm[j,i])+.5*(1-.5*ckm50_norm[i,j]-.5*ckm50_norm[j,i]) for j in range(i+1)])
 
-	#Read in the training common kmer matrices
-	#f=h5py.File(ckm30_train_file,'r')
-	#ckm30_train=np.array(f['common_kmers'],dtype=np.float64)
-	#f.close()
-	#f=h5py.File(ckm50_train_file,'r')
-	#ckm50_train=np.array(f['common_kmers'],dtype=np.float64)
-	#f.close()
-	#ckm30_train_norm = np.multiply(ckm30_train,1/np.diag(ckm30_train))
-	#ckm50_train_norm = np.multiply(ckm50_train,1/np.diag(ckm50_train))
+	#Make the list of distances (ave of the two ckm matrices)
 	ckm_ave_train = .5*ckm30_norm+.5*ckm50_norm
 	ckm_ave_train_dist = dict()
 	for i in range(len(org_names)):
@@ -117,6 +55,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	def insert_hyp_node(t, leaf_name, percent, ckm_ave_train_dist, org_names):
 		dists = map(lambda y: abs(y-percent), ckm_ave_train_dist[leaf_name])
 		nearby_indicies = list()
+		#Add all the organisms that are within 0.05 of the given percent
 	#	for i in range(len(dists)):
 	#		if dists[i]<=.05:
 	#			nearby_indicies.append(i)
@@ -140,12 +79,10 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 				child_node = (t&nearby_names[0])#This means "go up from root" in the direction of the nearest guy
 			ancestor_node = (t&child_node.name).up
 		elif mean_dist <= percent:
-			#percent_dist = LCA_to_leaf_dist + abs(percent-mean_dist)*(t.get_distance(leaf_name)-LCA_to_leaf_dist)/(1-mean_dist)
 			percent_dist = t.get_distance(LCA) + abs(percent-mean_dist)*(LCA_to_leaf_dist)/(1-mean_dist)
 			child_node = (t&leaf_name)
 			ancestor_node = (t&child_node.name).up
 		else:
-			#percent_dist = LCA_to_leaf_dist - abs(percent-mean_dist)*(LCA_to_leaf_dist)/(mean_dist)
 			percent_dist = t.get_distance(LCA) - abs(percent-mean_dist)*(t.get_distance(LCA))/(mean_dist)
 			child_node = (t&leaf_name)
 			ancestor_node = (t&child_node.name).up
@@ -155,10 +92,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 		insert_node(t, leaf_name+"_"+str(percent), child_node.name, percent_dist-t.get_distance(t.name, ancestor_node))
 
 
-	#set Bongori as outgroup
-	#ancestor = t.get_common_ancestor("bongori_IP780492","bongori_RKI1373","bongori_CDC270376","bongori_RKI1786","bongori_IP477084","bongori_CEIM46049","bongori_CEIM24450","bongori_RKI1398","bongori_12419_ATCC_43975")
-	#t.set_outgroup(ancestor)
-	#t.set_outgroup(t&'Halobacterium_sp_DL1')
+	#Set outgroup
 	if outgroup in names:
 		t.set_outgroup(t&outgroup) #I will need to check that this outgroup is actually one of the names...
 	else:
@@ -169,8 +103,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	#Insert hypothetical nodes
 	hyp_node_names = dict()
 	cutoffs = [.9,.8,.7,.6,.5,.4,.3,.2,.1]
-	#cutoffs = [.9,.75,.6,.45,.3,.15]
-	#cutoffs = map(lambda y: y**1.5,cutoffs)
 	cutoffs = [-.5141*(val**3)+1.0932*(val**2)+0.3824*val for val in cutoffs]
 	for i in range(len(org_names)):
 		xi = x[i:len(x):len(org_names)]
@@ -211,15 +143,13 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 				F.border.width = None
 				F.opacity = 0.6
 				faces.add_face_to_node(F,node, 0, position="branch-top")
-				#print node
-				#print size
+				#This is if I want the names of the hypothetical nodes to be printed as well
 				#nameFace = AttrFace("name", fsize=font_size, fgcolor='black')
 				#faces.add_face_to_node(nameFace, node, 0, position="branch-right")
 			else:
 				size=0
 		else:
 			size=0
-		#print(size)
 	
 	ts = TreeStyle()
 	ts.layout_fn = layout
@@ -236,4 +166,10 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile):
 	ts.legend_position=4
 	#t.show(tree_style=ts)
 	t.render(outfile, w=550, units="mm", tree_style=ts)
+	
+	#Redner the XML file
+	project = Phyloxml()
+	phylo = phyloxml.PhyloxmlTree(newick=t.write(format=0, features=[]))
+	project.add_phylogeny(phylo)
+	project.export(open(outfilexml,'w'))
 
