@@ -291,7 +291,7 @@ for taxonomic_level in range(1,8):
 
 output_file_handle = open(os.path.join(output_folder,file_base_name+".profile"),"w")
 #Write the header
-output_file_handle.write("# Taxonomic profile for file: %s\n" % os.path.join(output_folder,file_base_name))
+output_file_handle.write("# Taxonomic profile for file: %s\n" % os.path.abspath(os.path.join(output_folder,file_base_name)))
 output_file_handle.write("@Version:0.9.1\n")
 output_file_handle.write("@SampleID:%s\n" % file_base_name)
 output_file_handle.write("@Ranks: superkingdom|phylum|class|order|family|genus|species|strain\n")
