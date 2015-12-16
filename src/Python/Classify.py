@@ -83,7 +83,9 @@ fid = open(os.path.join(data_dir,"FileNames.txt"),'r')
 training_file_names = list()
 for file in fid:
 	training_file_names.append(os.path.basename(file.strip()))
-	if not os.path.isfile(
+	if not os.path.isfile(file):
+		print("Error: File " + file + " given in " + os.path.join(data_dir,"FileNames.txt") + " but does not exist.")
+		sys.exit(2)
 
 #Form the sample jellyfish file
 #Function
