@@ -161,7 +161,7 @@ shutil.rmtree(counts_folder)
 #Make FileNames.txt file
 fid = open(os.path.join(output_folder,"FileNames.txt"),'w')
 for file in file_names:
-	fid.write(file+"\n")
+	fid.write(os.path.abspath(file)+"\n")
 fid.close()
 
 
