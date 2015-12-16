@@ -47,7 +47,7 @@ if not os.path.isfile(input_files):
 	print("Error: List of input files " + input_files + " does not exist.")
 	sys.exit(2)
 if not os.path.isdir(ramdisk_location):
-	print("Error: fast IO device location + " ramdisk_location + " does not exist.")
+	print("Error: fast IO device location " + ramdisk_location + " does not exist.")
 	sys.exit(2)
 
 #Read in file names
