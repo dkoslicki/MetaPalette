@@ -57,7 +57,7 @@ fid.close()
 file_names = [name.strip() for name in file_names]
 
 for file_name in file_names:
-	if not os.path.isfile(file_name):
+	if not os.path.isfile(os.path.abspath(file_name.strip())):
 		print("Error: file " + file_name + " does not exist but given in input file " + input_files)
 		sys.exit(2)
 
