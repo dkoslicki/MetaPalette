@@ -156,7 +156,7 @@ res = pool.map(form_bcalms_star, izip(file_names, repeat(os.path.join(output_fol
 pool.close()
 
 #Remove counts
-shutil.rmtree(counts_folder)
+#shutil.rmtree(counts_folder)
 
 #Make FileNames.txt file
 fid = open(os.path.join(output_folder,"FileNames.txt"),'w')
