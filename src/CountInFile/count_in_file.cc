@@ -1,12 +1,15 @@
 /*  This file is part of Jellyfish.
+
     Jellyfish is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
+
     Jellyfish is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
+
     You should have received a copy of the GNU General Public License
     along with Jellyfish.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -61,9 +64,6 @@ struct common_info {
 };
 
 common_info read_headers(int argc, char* input_files[], cpp_array<file_info>& files) {
-  // Throw error if more than two input files
-  if (argc > 2)
-    err::die(err::msg() << "Error: Limited to two input files");
   // Read first file
   files.init(0, input_files[0]);
   if(!files[0].is.good())
@@ -117,10 +117,15 @@ void output_counts(cpp_array<file_info>& files) {
   heap_item          head      = heap.head();
   mer_dna            key;
   const int          num_files = files.size();
-  uint64_t		icounts   = 0;
-  uint64_t		jcounts   = 0;
   const reader_type* base      = &readers[0];
   uint64_t           counts[num_files];
+//  uint64_t           paircounts[binomialCoeff(num_files,2)][2];
+  uint64_t           paircounts[num_files][num_files];
+  for(int i=0; i<num_files; ++i){
+  	for(int j=0; j<num_files; ++j){
+  		paircounts[i][j]=0;
+  	}
+  }
   while(heap.is_not_empty()) {
     key = head->key_;
     memset(counts, '\0', sizeof(uint64_t) * num_files);
@@ -131,19 +136,25 @@ void output_counts(cpp_array<file_info>& files) {
         heap.push(*head->it_);
       head = heap.head();
     } while(head->key_ == key && heap.is_not_empty());
-//    std::cout << key;
-    if(counts[0] !=0 && counts[1] !=0){
-//    for(int i = 0; i < num_files; ++i){
-//      std::cout << " " << counts[i];
-	icounts += counts[0];
-	jcounts += counts[1];
-//     }
-//    std::cout << "\n";
-    }
+		for(int i=0; i<num_files; ++i){
+			for(int j=i; j<num_files; ++j){
+				if(counts[i] !=0 && counts[j] !=0){
+					paircounts[i][j]+=counts[j];
+					paircounts[j][i]+=counts[i];
+				}
+			}
+		}
   }
-  std::cout << icounts;
-  std::cout << " " << jcounts;
-  std::cout << "\n";
+  for(int i=0; i<num_files; ++i){
+  	for(int j=0; j<num_files; ++j){
+  		if(i==j){
+  			paircounts[i][j] /= 2;
+  		}
+  		std::cout << paircounts[i][j];
+  		std::cout << " ";
+  	}
+  	std::cout << "\n";
+  }
 }
 
 int main(int argc, char *argv[])
