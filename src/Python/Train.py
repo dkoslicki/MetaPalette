@@ -123,6 +123,7 @@ for kmer_size in kmer_sizes:
 				for jj in range(j,j+chunk_size):
 					if jj<num_files:
 						jcount_file_names.append(count_file_names[jj])
+				#Might want to only append if len(icount_file_names)>0 and len(jcount_file_names)>0
 				to_count_file_names.append(icount_file_names + jcount_file_names)
 				to_count_file_names_lengths.append((len(icount_file_names),len(jcount_file_names)))
 				ijs.append((i,j))
