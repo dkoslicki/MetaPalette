@@ -12,6 +12,9 @@
 
     You should have received a copy of the GNU General Public License
     along with Jellyfish.  If not, see <http://www.gnu.org/licenses/>.
+    
+    Modified by David Koslicki <david.koslicki@math.oregonstate.edu>
+    compile with: g++ -I /home/pi/koslickd/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /home/pi/koslickd/jellyfish-2.2.3/.libs -l jellyfish-2.0 -l pthread -Wl,--rpath=/home/pi/koslickd/jellyfish-2.2.3/.libs count_in_file.cc -o count_in_file
 */
 
 #include <iostream>
