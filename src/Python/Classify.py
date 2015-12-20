@@ -90,7 +90,13 @@ for file in fid:
 #Form the sample jellyfish file
 #Function
 def count_kmers(file, kmer_size):
-	cmd = jellyfish_binary + " count " + file + " -m "+str(kmer_size)+" -t "+str(num_threads)+" -s 100M -C -Q "+str(quality)+" -o " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")
+	extension = os.path.splitext(file)[1]
+	if extension==".bz2" or extension==".bz":
+		cmd = "bzip2 -c " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t "+str(num_threads)+" -s 100M -C -Q "+str(quality)+" -o " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")
+	elif extension==".gz" or extension==".z" or extension==".Z":
+		cmd = "gunzip -c " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t "+str(num_threads)+" -s 100M -C -Q "+str(quality)+" -o " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")
+	else:
+		cmd = jellyfish_binary + " count " + file + " -m "+str(kmer_size)+" -t "+str(num_threads)+" -s 100M -C -Q "+str(quality)+" -o " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf")
 	test = subprocess.check_output(cmd, shell = True)
 
 #Function to form Y files
