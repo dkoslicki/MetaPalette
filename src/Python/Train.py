@@ -1,3 +1,4 @@
+#Should implement something that checks if all the counts are there, and only counts the ones that it needs to
 import os, sys, shutil, subprocess, getopt
 from itertools import *
 from multiprocessing import Pool, freeze_support
