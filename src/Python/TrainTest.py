@@ -81,10 +81,12 @@ for kmer_size in kmer_sizes:
 	res = pool.map(count_kmers_star, izip(file_names, repeat(kmer_size)));
 
 #Now to form the common kmer matrix
-def count_in_file(file_tuple, kmer_size):
-	cmd = count_in_file_binary + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[0]))+"-"+str(kmer_size)+"mers.jf" + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[1]))+"-"+str(kmer_size)+"mers.jf"
-	test = subprocess.check_output(cmd, shell = True)
-	return test
+def count_in_file(file_list, kmer_size):
+	#cmd = count_in_file_binary + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[0]))+"-"+str(kmer_size)+"mers.jf" + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[1]))+"-"+str(kmer_size)+"mers.jf"
+	cmd = count_in_file_binary + " " + " ".join(file_list)
+	out = subprocess.check_output(cmd, shell = True)
+	res = np.fromstring(out, sep=" ").reshape((len(file_list), len(file_list)))
+	return res
 
 def count_in_file_star(arg):
 	return count_in_file(*arg)
@@ -92,28 +94,44 @@ def count_in_file_star(arg):
 #Make the CKM's but chunk the indices into sublocks so we don't get a bunch of thrashing/memory issues
 num_files = len(file_names)
 for kmer_size in kmer_sizes:
+	count_file_names = list()
+	to_count_file_names = list()
+	to_count_file_names_lengths = list()
+	ijs = list()
+	for file_name in file_names:
+		count_file_names.append(os.path.join(output_folder,"Counts",os.path.basename(file_name)+"-"+str(kmer_size)+"mers.jf"))
 	ckm = np.zeros((num_files,num_files),dtype=np.int64)
-	for j in range(0,num_files+chunk_size,chunk_size):
-		for i in range(0,num_files+chunk_size,chunk_size):
-			if i>=j:
-				file_tuples = list()
-				iijjs = list()
+	for i in range(0,num_files+chunk_size,chunk_size):
+		for j in range(0,num_files+chunk_size,chunk_size):
+			if j>i:
+				icount_file_names = list()
+				jcount_file_names = list()
 				for ii in range(i,i+chunk_size):
 					if ii<num_files:
-						for jj in range(j,j+chunk_size):
-							if jj<num_files:
-								file_tuples.append((file_names[ii],file_names[jj]))
-								iijjs.append((ii,jj))
-				pool.close()
-				pool = Pool(processes = num_threads)
-				res = pool.map(count_in_file_star, izip(file_tuples, repeat(kmer_size)));
-				#Turn the result into the Common Kmer Matrix
-				iter = 0
-				for ii,jj in iijjs:
-					str_split = res[iter].split()
-					ckm[ii,jj] = int(str_split[1]) #A_{i,j} = kmers in genome j common between i and j.
-					ckm[jj,ii] = int(str_split[0])
-					iter = iter + 1
+						icount_file_names.append(count_file_names[ii])
+				for jj in range(j,j+chunk_size):
+					if jj<num_files:
+						jcount_file_names.append(count_file_names[jj])
+				to_count_file_names.append(icount_file_names + jcount_file_names)
+				to_count_file_names_lengths.append((len(icount_file_names),len(jcount_file_names)))
+				ijs.append((i,j))
+	pool.close()
+	pool = Pool(processes = num_threads)
+	res = pool.map(count_in_file_star, izip(to_count_file_names, repeat(kmer_size)));
+	#Turn the result into the Common Kmer Matrix
+	for i in range(len(res)):
+		mat = res[i]
+		if i==0:
+			ckm[0:mat.shape[0], 0:mat.shape[0]] = mat
+		else:
+			#(1,1)
+			ckm[ijs[i][0]:(ijs[i][0]+to_count_file_names_lengths[i][0]), ijs[i][0]:(ijs[i][0]+to_count_file_names_lengths[i][0])] = mat[0:to_count_file_names_lengths[i][0], 0:to_count_file_names_lengths[i][0]]
+			#(1,2)
+			ckm[ijs[i][0]:(ijs[i][0]+to_count_file_names_lengths[i][0]), ijs[i][1]:(ijs[i][1]+to_count_file_names_lengths[i][1])] = mat[0:to_count_file_names_lengths[i][0], to_count_file_names_lengths[i][0]:(to_count_file_names_lengths[i][1]+to_count_file_names_lengths[i][0])]
+			#(2,1)
+			ckm[ijs[i][1]:(ijs[i][1]+to_count_file_names_lengths[i][1]), ijs[i][0]:(ijs[i][0]+to_count_file_names_lengths[i][0])] = mat[to_count_file_names_lengths[i][0]:(to_count_file_names_lengths[i][1]+to_count_file_names_lengths[i][0]), 0:to_count_file_names_lengths[i][0]]
+			#(2,2)
+			ckm[ijs[i][1]:(ijs[i][1]+to_count_file_names_lengths[i][1]), ijs[i][1]:(ijs[i][1]+to_count_file_names_lengths[i][1])] = mat[to_count_file_names_lengths[i][0]:(to_count_file_names_lengths[i][1]+to_count_file_names_lengths[i][0]), to_count_file_names_lengths[i][0]:(to_count_file_names_lengths[i][1]+to_count_file_names_lengths[i][0])]
 	#Save the ckm matrices
 	fid = h5py.File(os.path.join(output_folder,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'w')
 	dset = fid.create_dataset("common_kmers", data=ckm)
