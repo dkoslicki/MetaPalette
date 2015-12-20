@@ -11,15 +11,15 @@ import h5py
 bcalm_binary = 'bcalm'
 jellyfish_binary = 'jellyfish'
 count_in_file_binary ='count_in_file'
-chunk_size = 1000
+chunk_size = 200
 try:
-	opts, args = getopt.getopt(sys.argv[1:],"hi:o:b:r:j:c:t:k:",["Help=","InputListOfFiles=","OutputFolder=", "BcalmBinary=","RamdiskLocation=","JellyfishBinary=","CountInFileBinary=","Threads=","KmerCountingThreads="])
+	opts, args = getopt.getopt(sys.argv[1:],"hi:o:b:r:j:c:t:k:s",["Help=","InputListOfFiles=","OutputFolder=", "BcalmBinary=","RamdiskLocation=","JellyfishBinary=","CountInFileBinary=","Threads=","KmerCountingThreads=","ChunkSize="])
 except getopt.GetoptError:
-	print 'Unknown option, call using: python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads>'
+	print 'Unknown option, call using: python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads> -s <ChunkSize>'
 	sys.exit(2)
 for opt, arg in opts:
 	if opt == '-h':
-		print 'python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads>'
+		print 'python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads> -s <ChunkSize>'
 		sys.exit(2)
 	elif opt in ("-i", "--InputListOfFiles"):
 		input_files = arg
@@ -36,11 +36,15 @@ for opt, arg in opts:
 	elif opt in ("-t", "--Threads"):
 		num_threads = int(arg)
 	elif opt in ("-k", "--KmerCountingThreads"):
-		kmer_counting_threads = int(arg) 
+		kmer_counting_threads = int(arg)
+	elif opt in ("-s", "--ChunkSize"):
+		chunk_size = int(arg)
 
 #These are the kmer sizes to train on
 kmer_sizes = [30,50]
 
+if chunk_size*num_threads>=1024:
+	print("Warning: chunk_size("+str(chunk_size)+")*num_threads("+str(num_threads)+") is greater than or equal to 1024 (the typical value of ulimit -n, the maximum number of allowed open files). Please reduce the chunk_size (-s) or num_threads (-t) or risk the program throwing an error.")
 if not os.path.isdir(output_folder):
 	print("Error: Output folder " + output_folder + " does not exist.")
 	sys.exit(2)
@@ -63,14 +67,20 @@ for file_name in file_names:
 		sys.exit(2)
 
 #Form k-mer counts in parallel
-if os.path.exists(os.path.join(output_folder,"Counts")):
-	shutil.rmtree(os.path.join(output_folder,"Counts"))
-os.makedirs(os.path.join(output_folder,"Counts"))
+if not os.path.isdir(os.path.join(output_folder,"Counts")):
+	os.makedirs(os.path.join(output_folder,"Counts"))
 
 #Can put automatic decompression here
 def count_kmers(file, kmer_size):
-	cmd = jellyfish_binary + " count " + file + " -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
-	test = subprocess.check_call(cmd, shell = True)
+	extension = os.path.splitext(file)[1]
+	if extension==".bz2" or extension==".bz":
+		cmd = "bzip2 -c " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
+	elif extension==".gz" or extension==".z" or extension==".Z":
+		cmd = "gunzip -c " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
+	else:
+		cmd = jellyfish_binary + " count " + file + " -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
+	if not os.path.isfile(os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")):
+		test = subprocess.check_call(cmd, shell = True)
 
 def count_kmers_star(arg):
 	return count_kmers(*arg)
