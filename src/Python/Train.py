@@ -129,7 +129,7 @@ for kmer_size in kmer_sizes:
 	pool.close()
 	pool = Pool(processes = num_threads)
 	res = pool.map(count_in_file_star, izip(to_count_file_names, repeat(kmer_size)));
-	#Turn the result into the Common Kmer Matrix
+	#Turn the result into the Common Kmer Matrix. Put square submatrices of mat into proper place in ckm (draw a picture to see what's going on)
 	for i in range(len(res)):
 		mat = res[i]
 		if i==0:
@@ -152,34 +152,34 @@ for kmer_size in kmer_sizes:
 #Single file bcalm function
 counts_folder = os.path.join(output_folder,"Counts")
 def form_bcalms(input_file, output_folder_bcalm, bcalm_binary, ramdisk_location, jellyfish_binary, counts_directory):
-	input_file = os.path.basename(input_file)
-	#Make temporary directory
-	if os.path.exists(os.path.join(ramdisk_location,input_file)):
-		shutil.rmtree(os.path.join(ramdisk_location,input_file))
-	os.makedirs(os.path.join(ramdisk_location,input_file))
-	#Make .dot file
-	cmd = jellyfish_binary +" dump "+os.path.join(counts_folder,input_file+"-30mers.jf")+" -c -t | cut -f 1 | tr '[:upper:]' '[:lower:]' | sed 's/$/;/g' > " + os.path.join(ramdisk_location,input_file,input_file+"-30mers.dot")
-	temp = subprocess.check_call(cmd, shell = True)
-	#Run Bcalm
-	working_dir = os.getcwd()
-	os.chdir(os.path.join(ramdisk_location,input_file))
-	cmd = bcalm_binary +" "+ input_file +"-30mers.dot " + input_file + "-30mers.bcalm 5"
-	FNULL = open(os.devnull, 'w')
-	temp = subprocess.check_call(cmd, shell = True, stdout=FNULL)
-	FNULL.close()
-	#Move the file and delete the temp directory
-	os.chdir(working_dir)
-	cmd = "cat " + os.path.join(ramdisk_location, input_file, input_file+"-30mers.bcalm") + " | sed 's/;//g' | tr '[:lower:]' '[:upper:]'| sed 's/^/>seq\\n/g' > " + os.path.join(output_folder_bcalm,input_file+"-30mers.bcalm.fa")
-	temp = subprocess.check_call(cmd, shell = True)
-	shutil.rmtree(os.path.join(ramdisk_location, input_file))
+	if not os.path.isfile(os.path.join(output_folder_bcalm,input_file+"-30mers.bcalm.fa")):
+		input_file = os.path.basename(input_file)
+		#Make temporary directory
+		if os.path.exists(os.path.join(ramdisk_location,input_file)):
+			shutil.rmtree(os.path.join(ramdisk_location,input_file))
+		os.makedirs(os.path.join(ramdisk_location,input_file))
+		#Make .dot file
+		cmd = jellyfish_binary +" dump "+os.path.join(counts_folder,input_file+"-30mers.jf")+" -c -t | cut -f 1 | tr '[:upper:]' '[:lower:]' | sed 's/$/;/g' > " + os.path.join(ramdisk_location,input_file,input_file+"-30mers.dot")
+		temp = subprocess.check_call(cmd, shell = True)
+		#Run Bcalm
+		working_dir = os.getcwd()
+		os.chdir(os.path.join(ramdisk_location,input_file))
+		cmd = bcalm_binary +" "+ input_file +"-30mers.dot " + input_file + "-30mers.bcalm 5"
+		FNULL = open(os.devnull, 'w')
+		temp = subprocess.check_call(cmd, shell = True, stdout=FNULL)
+		FNULL.close()
+		#Move the file and delete the temp directory
+		os.chdir(working_dir)
+		cmd = "cat " + os.path.join(ramdisk_location, input_file, input_file+"-30mers.bcalm") + " | sed 's/;//g' | tr '[:lower:]' '[:upper:]'| sed 's/^/>seq\\n/g' > " + os.path.join(output_folder_bcalm,input_file+"-30mers.bcalm.fa")
+		temp = subprocess.check_call(cmd, shell = True)
+		shutil.rmtree(os.path.join(ramdisk_location, input_file))
 
 def form_bcalms_star(arg):
 	return form_bcalms(*arg)
 
 #compute bcalms in parallel
-if os.path.exists(os.path.join(output_folder,"Bcalms")):
-	shutil.rmtree(os.path.join(output_folder,"Bcalms"))
-os.makedirs(os.path.join(output_folder,"Bcalms"))
+if not os.path.isdir(os.path.join(output_folder,"Bcalms")):
+	os.makedirs(os.path.join(output_folder,"Bcalms"))
 pool = Pool(processes = kmer_counting_threads)
 res = pool.map(form_bcalms_star, izip(file_names, repeat(os.path.join(output_folder,"Bcalms")), repeat(bcalm_binary), repeat(ramdisk_location), repeat(jellyfish_binary), repeat(os.path.join(output_folder,"Counts"))))
 pool.close()
