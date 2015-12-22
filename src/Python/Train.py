@@ -74,7 +74,7 @@ if not os.path.isdir(os.path.join(output_folder,"Counts")):
 def count_kmers(file, kmer_size):
 	extension = os.path.splitext(file)[1]
 	if extension==".bz2" or extension==".bz":
-		cmd = "bzip2 -c " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
+		cmd = "bzip2 -dc " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
 	elif extension==".gz" or extension==".z" or extension==".Z":
 		cmd = "gunzip -c " + file + " | " + jellyfish_binary + " count /dev/fd/0 -m "+str(kmer_size)+" -t 1 -s 10M --out-counter-len 3 --disk -C -o " + os.path.join(output_folder,"Counts",os.path.basename(file)+"-"+str(kmer_size)+"mers.jf")
 	else:
