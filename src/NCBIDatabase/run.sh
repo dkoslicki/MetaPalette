@@ -1,4 +1,10 @@
 #~/bin/sh
+#Change the "outDir" to the output directory you wish.
+#Change the nProcs to the number of parallel processes to download from NCBI (too many will cause NCBI to lock you out)
+#Comment out the line beginning with "python repophlan_get_microbes.py" if you do not wish the bacteria, archaea, and eukaryota to be downloaded
+#Comment out the line beginning with "python repophlan_get_viruses.py" if you do not wish the viruses to be downloaded
+#Changing anything else risks an error
+
 outDir="out"
 nProcs=15
 
