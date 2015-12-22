@@ -5,7 +5,7 @@ def read_params(args):
 	arg = parser.add_argument
 	arg( '--taxonomy', metavar='taxonomy', required = True, type=str, help="The taxonomy file")
 	arg( '--out_dir', required = True, default = None, type = str, help="The output folder")
-	arg( '--repophlan_dir', required = True, default = None, type = str, help="The repophland folder. eg: /RepoPhlAn/out)
+	arg( '--repophlan_dir', required = True, default = None, type = str, help="The repophland folder. eg: /RepoPhlAn/out")
 	return vars(parser.parse_args())
 
 if __name__ == '__main__':
