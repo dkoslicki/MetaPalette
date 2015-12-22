@@ -13,11 +13,12 @@ if __name__ == '__main__':
 	if not os.path.exists( par['out_dir'] ):
 		os.mkdir( par['out_dir'] )
 	outdir = par['out_dir']+ "/"
+	repophlan_dir = par['repophlan_dir']+"/"
 	Accession2TaxID = dict()
 	Accession2FileName = dict()
-	Accession2TaxIDFile = "/nfs1/Koslicki_Lab/koslickd/RepoPhlAn-12-20-14/out/repophlan_microbes_21122014.txt"
-	taxonomyFile = "/nfs1/Koslicki_Lab/koslickd/RepoPhlAn-12-20-14/out/taxonomy_reduced_taxID_22122014.txt"
-	fna_dir = "/nfs1/Koslicki_Lab/koslickd/RepoPhlAn-12-20-14/out/microbes_21122014/fna/"
+	Accession2TaxIDFile = os.path.join(repophlan_dir,"repophlan_microbes.txt")
+	taxonomyFile = os.path.join(repophlan_dir,"taxonomy_reduced_taxID.txt")
+	fna_dir = os.path.join(repophlan_dir,"microbes/fna/")
 	fid = open(Accession2TaxIDFile,"r")
 	i=0
 	for line in fid:
@@ -64,36 +65,36 @@ if __name__ == '__main__':
 					eukaryota_taxonomies.append(taxonomy)
 					eukaryota_filenames.append(os.path.abspath(os.path.join(fna_dir,accession+".fna.bz2")))
 	
-	fid = open("BacteriaTaxonomy.txt","w")
+	fid = open(os.path.join(outdir,"BacteriaTaxonomy.txt"),"w")
 	for taxonomy in bacteria_taxonomies:
 		fid.write("%s\n" % taxonomy)
 	fid.close()
-	fid = open("BacteriaFileNames.txt","w")
+	fid = open(os.path.join(outdir,"BacteriaFileNames.txt"),"w")
 	for filename in bacteria_filenames:
 		fid.write("%s\n" % filename)
 	fid.close()
 	
-	fid = open("ArchaeaTaxonomy.txt","w")
+	fid = open(os.path.join(outdir,"ArchaeaTaxonomy.txt"),"w")
 	for taxonomy in archaea_taxonomies:
 		fid.write("%s\n" % taxonomy)
 	fid.close()
-	fid = open("ArchaeaFileNames.txt","w")
+	fid = open(os.path.join(outdir,"ArchaeaFileNames.txt"),"w")
 	for filename in archaea_filenames:
 		fid.write("%s\n" % filename)
 	fid.close()
 	
-	fid = open("EukaryotaTaxonomy.txt","w")
+	fid = open(os.path.join(outdir,"EukaryotaTaxonomy.txt"),"w")
 	for taxonomy in eukaryota_taxonomies:
 		fid.write("%s\n" % taxonomy)
 	fid.close()
-	fid = open("EukaryotaFileNames.txt","w")
+	fid = open(os.path.join(outdir,"EukaryotaFileNames.txt"),"w")
 	for filename in eukaryota_filenames:
 		fid.write("%s\n" % filename)
 	fid.close()
 	
 	#Then do the same thing for the viruses....
-	virus_taxonomy_filename = "/nfs1/Koslicki_Lab/Temp/RepoPhlAnTemp/Viruses/out/repophlan_viruses.txt"
-	virus_dir = "/nfs1/Koslicki_Lab/Temp/RepoPhlAnTemp/Viruses/out/viruses/"
+	virus_taxonomy_filename = os.path.join(repophlan_dir,"repophlan_viruses.txt")
+	virus_dir = os.path.join(repophlan_dir,"viruses")
 	fid = open(virus_taxonomy_filename,"r")
 	virus_temp_accessions = list()
 	virus_accession2TaxID = dict()
@@ -116,12 +117,12 @@ if __name__ == '__main__':
 						virus_taxonomies.append(taxonomy)
 						virus_filenames.append(os.path.abspath(os.path.join(virus_dir,accession+".fna")))
 	
-	fid = open("VirusTaxonomy.txt","w")
+	fid = open(os.path.join(outdir,"VirusTaxonomy.txt"),"w")
 	for taxonomy in virus_taxonomies:
 		fid.write("%s\n" % taxonomy)
 	fid.close()
 	
-	fid = open("VirusFileNames.txt","w")
+	fid = open(os.path.join(outdir,"VirusFileNames.txt"),"w")
 	for filename in virus_filenames:
 		fid.write("%s\n" % filename)
 	fid.close()
