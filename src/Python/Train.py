@@ -157,7 +157,7 @@ for kmer_size in kmer_sizes:
 #Single file bcalm function
 counts_folder = os.path.join(output_folder,"Counts")
 def form_bcalms(input_file, output_folder_bcalm, bcalm_binary, ramdisk_location, jellyfish_binary, counts_directory):
-	if not os.path.isfile(os.path.join(output_folder_bcalm,input_file+"-30mers.bcalm.fa")):
+	if not os.path.isfile(os.path.join(output_folder_bcalm,os.path.basename(input_file)+"-30mers.bcalm.fa")):
 		input_file = os.path.basename(input_file)
 		#Make temporary directory
 		if os.path.exists(os.path.join(ramdisk_location,input_file)):
