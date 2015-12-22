@@ -13,3 +13,7 @@ python repophlan_get_microbes.py --taxonomy ${outDir}/taxonomy_reduced.txt --out
 python generate_taxonomy_taxid.py --output ${outDir}/taxonomy_taxID.txt --output_red ${outDir}/taxonomy_reduced_taxID.txt --pickle ${outDir}/taxonomy_taxID.pkl | tee ${outDir}/generate_taxonomy_tax_ID.txt
 python repophlan_get_viruses.py --taxonomy ${outDir}/taxonomy_reduced_taxID.txt --out_dir ${outDir}/viruses --out_summary ${outDir}/repophlan_viruses.txt | tee ${outDir}/repophlan_viruses.log
 python parse_taxonomy.py --taxonomy ${outDir}/taxonomy_reduced_taxID.txt --out_dir ${outDir} --repophlan_dir ${outDir}
+sed -i 's/norank__1_root|//g' ${outDir}/taxonomy_reduced_taxID.txt
+sed -i 's/_noname//g' ${outDir}/taxonomy_reduced_taxID.txt
+sed -i 's/norank__1_root|//g' ${outDir}/repophlan_viruses.txt
+sed -i 's/_noname//g' ${outDir}/repophlan_viruses.txt
