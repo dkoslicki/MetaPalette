@@ -26,8 +26,9 @@ if __name__ == '__main__':
 			pass
 		else:
 			Accession = line.strip().split('\t')[0]
-			TaxID = line.strip().split('\t')[26]
-			filename = line.strip().split('\t')[12]
+			TaxID = line.strip().split('\t')[25]
+			#filename = line.strip().split('\t')[12]
+			#filename = os.path.join(fna_dir,accession+".fna.bz2")
 			Accession2TaxID[Accession] = TaxID
 		i=1
 	fid.close()
