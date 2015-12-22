@@ -60,6 +60,11 @@ fid = open(input_files,'r')
 file_names = fid.readlines()
 fid.close()
 file_names = [name.strip() for name in file_names]
+num_files = len(file_names)
+
+if num_files<=chunk_size:
+	print("Error: chunk_size (" + str(chunk_size) + ") is less than number of files (" + str(num_files) +"). Please reduce chunk_size (-s) and try again.")
+	sys.exit(2)
 
 for file_name in file_names:
 	if not os.path.isfile(os.path.abspath(file_name.strip())):
@@ -103,7 +108,6 @@ def count_in_file_star(arg):
 	return count_in_file(*arg)
 
 #Make the CKM's but chunk the indices into sublocks so we don't get a bunch of thrashing/memory issues
-num_files = len(file_names)
 for kmer_size in kmer_sizes:
 	count_file_names = list()
 	to_count_file_names = list()
