@@ -13,7 +13,7 @@ jellyfish_binary = 'jellyfish'
 count_in_file_binary ='count_in_file'
 chunk_size = 200
 try:
-	opts, args = getopt.getopt(sys.argv[1:],"hi:o:b:r:j:c:t:k:s",["Help=","InputListOfFiles=","OutputFolder=", "BcalmBinary=","RamdiskLocation=","JellyfishBinary=","CountInFileBinary=","Threads=","KmerCountingThreads=","ChunkSize="])
+	opts, args = getopt.getopt(sys.argv[1:],"hi:o:b:r:j:c:t:k:s:",["Help=","InputListOfFiles=","OutputFolder=", "BcalmBinary=","RamdiskLocation=","JellyfishBinary=","CountInFileBinary=","Threads=","KmerCountingThreads=","ChunkSize="])
 except getopt.GetoptError:
 	print 'Unknown option, call using: python Train.py -i <InputListOfFiles> -o <OutputFolder> -b <BcalmBinary> -r <RamdiskLocation> -j <JellyfishBinary> -c <CountInFileBinary> -t <Threads> -k <KmerCountingThreads> -s <ChunkSize>'
 	sys.exit(2)
