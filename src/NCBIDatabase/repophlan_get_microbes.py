@@ -37,7 +37,7 @@ logger = logging.getLogger(sys.argv[0])
 
 
 
-toescl = ["p__Brachiopoda","p__Cnidaria","p__Annelida","p__Arthropoda","p__Chordata","p__Chytridiomycota","p__Echinodermata","p__Hemichordata","p__Mollusca","p__Nematoda","p__Platyhelminthes","p__Porifera","p__Streptophyta","p__Eukaryota_noname"]
+toescl = ["p__Priapulida","p__Brachiopoda","p__Cnidaria","p__Annelida","p__Arthropoda","p__Chordata","p__Chytridiomycota","p__Echinodermata","p__Hemichordata","p__Mollusca","p__Nematoda","p__Platyhelminthes","p__Porifera","p__Streptophyta","p__Eukaryota_noname"]
         
 
 def read_params(args):

@@ -97,10 +97,11 @@ for kmer_size in kmer_sizes:
 	res = pool.map(count_kmers_star, izip(file_names, repeat(kmer_size)));
 
 #Now to form the common kmer matrix
-def count_in_file(file_list, kmer_size):
+def count_in_file(file_list, kmer_size, output_folder):
 	#cmd = count_in_file_binary + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[0]))+"-"+str(kmer_size)+"mers.jf" + " " + os.path.join(output_folder,"Counts",os.path.basename(file_tuple[1]))+"-"+str(kmer_size)+"mers.jf"
+	#os.chdir(os.path.join(output_folder,"Counts"))
 	cmd = count_in_file_binary + " " + " ".join(file_list)
-	out = subprocess.check_output(cmd, shell = True)
+	out = subprocess.check_output(cmd, shell = True, cwd=os.path.join(output_folder,"Counts"))
 	res = np.fromstring(out, sep=" ").reshape((len(file_list), len(file_list)))
 	return res
 
@@ -114,7 +115,8 @@ for kmer_size in kmer_sizes:
 	to_count_file_names_lengths = list()
 	ijs = list()
 	for file_name in file_names:
-		count_file_names.append(os.path.join(output_folder,"Counts",os.path.basename(file_name)+"-"+str(kmer_size)+"mers.jf"))
+		#count_file_names.append(os.path.join(output_folder,"Counts",os.path.basename(file_name)+"-"+str(kmer_size)+"mers.jf"))
+		count_file_names.append(os.path.basename(file_name)+"-"+str(kmer_size)+"mers.jf")
 	ckm = np.zeros((num_files,num_files),dtype=np.int64)
 	for i in range(0,num_files+chunk_size,chunk_size):
 		for j in range(0,num_files+chunk_size,chunk_size):
@@ -133,7 +135,7 @@ for kmer_size in kmer_sizes:
 					ijs.append((i,j))
 	pool.close()
 	pool = Pool(processes = num_threads)
-	res = pool.map(count_in_file_star, izip(to_count_file_names, repeat(kmer_size)));
+	res = pool.map(count_in_file_star, izip(to_count_file_names, repeat(kmer_size), repeat(output_folder)));
 	#Turn the result into the Common Kmer Matrix. Put square submatrices of mat into proper place in ckm (draw a picture to see what's going on)
 	for i in range(len(res)):
 		mat = res[i]
