@@ -43,8 +43,8 @@ for opt, arg in opts:
 #These are the kmer sizes to train on
 kmer_sizes = [30,50]
 
-if chunk_size*num_threads>=1024:
-	print("Warning: chunk_size ("+str(chunk_size)+")*num_threads ("+str(num_threads)+") is greater than or equal to 1024 (the typical value of ulimit -n, the maximum number of allowed open files). Please change the ulimit -Hn, reduce the chunk_size (-s), or reduce the num_threads (-t) or risk the program throwing an error.")
+if 2*chunk_size*num_threads>=1024:
+	print("Warning: 2*chunk_size ("+str(chunk_size)+")*num_threads ("+str(num_threads)+") is greater than or equal to 1024 (the typical value of ulimit -n, the maximum number of allowed open files). Please change the ulimit -Hn, reduce the chunk_size (-s), or reduce the num_threads (-t) or risk the program throwing an error.")
 if not os.path.isdir(output_folder):
 	print("Error: Output folder " + output_folder + " does not exist.")
 	sys.exit(2)
