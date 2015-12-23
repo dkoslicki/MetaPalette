@@ -76,7 +76,7 @@ for rank in ranks:
 	_=plt.xlabel('Taxa');
 	_=plt.ylabel('Rel. abundance');
 	_=plt.title(rank);
-	_=plt.savefig(os.path.join(output_folder,os.path.basename(input_file)+"_"+rank+".png");
+	_=plt.savefig(os.path.join(output_folder,os.path.basename(input_file)+"_"+rank+".png"));
 	_=plt.close();
 
 
