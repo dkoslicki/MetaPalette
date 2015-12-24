@@ -5,9 +5,6 @@ from multiprocessing import Pool, freeze_support
 import numpy as np
 import h5py
 
-#python Train.py -i /data/temp/Data/FileNamesFullPath10.txt -o /nfs1/Koslicki_Lab/koslickd/CommonKmers/Python/Output -b /nfs1/Koslicki_Lab/koslickd/Bcalm/bcalm/./bcalm -r /data/temp -j /home/pi/koslickd/jellyfish-2.2.3/bin/./jellyfish -c /nfs1/Koslicki_Lab/Backup/koslickd/CAMI/CommonKmers/src/CountInFile/./count_in_file -t 48 -k 30
-
-
 bcalm_binary = 'bcalm'
 jellyfish_binary = 'jellyfish'
 count_in_file_binary ='count_in_file'
