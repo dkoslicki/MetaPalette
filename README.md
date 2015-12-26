@@ -1,6 +1,6 @@
 # MetaPalette #
 
-## What is CommonKmers? ##
+## What is MetaPalette? ##
 CommonKmers is a k-mer based bacterial community reconstruction technique that utilizes sparsity promoting ideas from the field of compressed sensing to reconstruct the composition of a bacterial community. This method allows for strain-level abundance estimation, and can quantify the evolutionary distance between organisms in the sample and in the training database (thereby allowing for successful classification even with incomplete training data).
 
 
