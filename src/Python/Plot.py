@@ -15,13 +15,13 @@ import PlotPackage
 outgroup = "Halobacterium_sp_DL1"
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:],"hd:o:p:i:t:g:",["Help=", "DataDir=", "OutputFolder=", "ProfileDir=", "InputFileName=", "Taxon=", "Outgroup="])
+	opts, args = getopt.getopt(sys.argv[1:],"hd:o:p:i:t:g:",["Help=", "DataDir=", "OutputFolder=", "ProfileDir=", "InputFileName=", "TaxaRank=", "Outgroup="])
 except getopt.GetoptError:
-	print 'Unknown option, call using: python Plot.py -d <DataDir> -o <OutputFolder> -p <ProfileDir> -i <InputFileName> -t <Taxon> -g <Outgroup>'
+	print 'Unknown option, call using: python Plot.py -d <DataDir> -o <OutputFolder> -p <ProfileDir> -i <InputFileName> -t <TaxaRank> -g <Outgroup>'
 	sys.exit(2)
 for opt, arg in opts:
 	if opt == '-h':
-		print 'python Plot.py -d <DataDir> -o <OutputFolder> -p <ProfileDir> -i <InputFileName> -t <Taxon> -g <Outgroup>'
+		print 'python Plot.py -d <DataDir> -o <OutputFolder> -p <ProfileDir> -i <InputFileName> -t <TaxaRank> -g <Outgroup>'
 		sys.exit(2)
 	elif opt in ("-d", "--DataDir"):
 		data_dir = arg
@@ -31,7 +31,7 @@ for opt, arg in opts:
 		profile_folder = arg
 	elif opt in ("-i", "--InputFileName"):
 		input_file_name = arg
-	elif opt in ("-t", "--Taxon"):
+	elif opt in ("-t", "--TaxaRank"):
 		taxon = arg
 	elif opt in ("-g", "--Outgroup"):
 		outgroup = arg
@@ -42,7 +42,7 @@ input_file_basename = os.path.basename(input_file_name)
 
 #Check for errors
 if taxon!="genus" and taxon!="species":
-	print("Error: taxon (-t) must be either species or genus. Value of " + taxon + " given.")
+	print("Error: Taxa Rank (-t) must be either species or genus. Value of " + taxon + " given.")
 	sys.exit(2)
 if not os.path.isdir(data_dir):
 	print("Error: Data directory " + data_dir + " does not exist.")
