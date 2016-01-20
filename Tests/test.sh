@@ -1,4 +1,5 @@
 #This will run each of the main scripts of MetaPalette and check the results with the pre-computed values
+#If in a Docker container, run with: xvfb-run ./test.sh
 
 #Test training
 python ../src/Python/Train.py -i Data/FullFileNames.txt -o TestOutput -b bcalm -r `pwd` -j jellyfish -c count_in_file -t 4 -k 5 -s 4
