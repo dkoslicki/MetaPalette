@@ -1,8 +1,5 @@
 #This docker file will create a docker container for the CommonKmers method
 
-#docker run --rm -i -t cami/profiling --shell
-#'from ete2 import Tree; t = Tree( "((a,b),c);" ); t.render("mytree.png", w=183, units="mm")'
-
 FROM cami/profiling
 
 MAINTAINER David Koslicki version: 0.1
@@ -38,7 +35,7 @@ RUN apt-get install -y python-numpy python-qt4 python-lxml python-six && \
 
 #Install X server for ETE
 RUN apt-get install -y xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps
-#preface all python commands with xvfb-run. 
+#preface all python commands with xvfb-run 
 
 #Install h5py
 RUN apt-get install -y python-h5py
