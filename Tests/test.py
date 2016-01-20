@@ -11,6 +11,6 @@ python ../src/Python/Classify.py -d TestOutput -o TestOutput -i Data/test-reads.
 #Write code to check if output makes sense
 
 #Test plotting
-python ../src/Python/Plot.py -d TestOutput -o TestOutput -p TestOutput -t genus
+python ../src/Python/Plot.py -d TestOutput -o TestOutput -p TestOutput -t genus -i Data/test-reads.fa -g Escherichia_coli
 
 #Check if plot output makes sense
