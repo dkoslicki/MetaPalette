@@ -60,8 +60,8 @@ file_names = [name.strip() for name in file_names]
 num_files = len(file_names)
 
 if num_files<=chunk_size:
-	print("Error: chunk_size (" + str(chunk_size) + ") is less than number of files (" + str(num_files) +"). Please reduce chunk_size (-s) and try again.")
-	sys.exit(2)
+	print("Error: chunk_size (" + str(chunk_size) + ") is greater than number of files (" + str(num_files) +"). Reducing chunk size.")
+	chunk_size = num_files - 1;
 
 for file_name in file_names:
 	if not os.path.isfile(os.path.abspath(file_name.strip())):
