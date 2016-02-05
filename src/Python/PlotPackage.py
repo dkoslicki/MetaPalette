@@ -12,6 +12,7 @@ import os
 def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
 	
 	#Make sure names are unique
+	names = org_names
 	for name in names:
 		if names.count(name)>1:
 			temp_name = name
@@ -26,7 +27,6 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
 	ckm50_norm = np.multiply(ckm50,1/np.diag(ckm50))
 	num_rows = ckm30_norm.shape[0]
 	num_cols = ckm30_norm.shape[1]
-	names = org_names
 	matrix=list()
 	for i in range(num_rows):
 		matrix.append([.5*(1-.5*ckm30_norm[i,j]-.5*ckm30_norm[j,i])+.5*(1-.5*ckm50_norm[i,j]-.5*ckm50_norm[j,i]) for j in range(i+1)])
