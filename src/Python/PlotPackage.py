@@ -10,7 +10,16 @@ import math
 import os
 
 def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
-
+	
+	#Make sure names are unique
+	for name in names:
+		if names.count(name)>1:
+			temp_name = name
+			i=1
+			for dummy in range(0,names.count(name)-1): #Don't change the last one, just to make sure we don't conflict with the outgroup
+				names[names.index(temp_name)] = temp_name + "_" + str(i)
+				i = i +1
+		
 	#Normalize the x vector
 	x = map(lambda y: y/sum(x),x)
 	ckm30_norm = np.multiply(ckm30,1/np.diag(ckm30))
