@@ -147,7 +147,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
 				F = CircleFace(radius=size_factor*math.sqrt(size), color="RoyalBlue", style="sphere")
 				F.border.width = None
 				F.opacity = 0.6
-				faces.add_face_to_node(F,node, 0, position="branch-top")
+				faces.add_face_to_node(F,node, 0, position="branch-right")
 				#This is if I want the names of the hypothetical nodes to be printed as well
 				#nameFace = AttrFace("name", fsize=font_size, fgcolor='black')
 				#faces.add_face_to_node(nameFace, node, 0, position="branch-right")
@@ -168,7 +168,7 @@ def MakePlot(x, org_names, ckm30, ckm50, outgroup, outfile, outfilexml, sum_x):
 	F.opacity = 0.6
 	ts.legend.add_face(F,0)
 	ts.legend.add_face(TextFace("  Inferred relative abundance",fsize=1.5*font_size,fgcolor="Blue"),1)
-	ts.legend.add_face(TextFace("  Total absolute abundance depicted " + str(sum_x), fsize=1.5*font_size,fgcolor="Black"),1)
+	ts.legend.add_face(TextFace("  Total absolute abundance depicted " + str(sum_x)[0:8], fsize=1.5*font_size,fgcolor="Black"),1)
 	ts.legend_position=4
 	#t.show(tree_style=ts)
 	t.render(outfile, w=550, units="mm", tree_style=ts)
