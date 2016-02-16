@@ -40,14 +40,14 @@ RUN apt-get install -y xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scal
 #Install h5py
 RUN apt-get install -y python-h5py
 
-#Get the CommonKmers code, Install query per sequence and count_in_file
+#Get the MetaPalette code, Install query per sequence and count_in_file
 RUN git clone https://github.com/dkoslicki/MetaPalette.git && \
  cd /MetaPalette/src/QueryPerSeq/ && \
- g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -l jellyfish-2.0 -l pthread -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs query_per_sequence.cc sequence_mers.hpp -o query_per_sequence && \
+ g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs query_per_sequence.cc sequence_mers.hpp -l jellyfish-2.0 -l pthread -o query_per_sequence && \
  cp /MetaPalette/src/QueryPerSeq/query_per_sequence /usr/local/bin && \
  ls /MetaPalette/src/Python/ | xargs -I{} cp /MetaPalette/src/Python/{} /usr/local/sbin/ && \
  cd /MetaPalette/src/CountInFile/ && \
- g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -l jellyfish-2.0 -l pthread -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs count_in_file.cc -o count_in_file && \
+ g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs count_in_file.cc -l jellyfish-2.0 -l pthread -o count_in_file && \
  cp /MetaPalette/src/CountInFile/count_in_file /usr/local/bin
 
 #Install Bcalm
@@ -58,8 +58,8 @@ RUN wget https://github.com/Malfoy/bcalm/archive/1.tar.gz && \
  cp bcalm /usr/local/bin
 
 #Create tasks
-#RUN cp /CommonKmers/Docker/default /dckr/etc/tasks.d/default && \
-# cp /CommonKmers/Docker/sensitive /dckr/etc/tasks.d/sensitive && \
-# cp /CommonKmers/Docker/specific /dckr/etc/tasks.d/specific && \
-# cp /CommonKmers/Docker/train /dckr/etc/tasks.d/train && \
-# echo -e "\n \n NOTE: Be sure to download the training data at http://www.math.oregonstate.edu/~koslickd/CommonKmersData.tar.gz and uncompress it. The resulting directory should be passed to docker at the location CONT_DATABASES_DIR via: -v /path/to/uncompressed/Data:/dckr/mnt/camiref/CommonKmersData:ro"
+RUN cp /MetaPalette/Docker/default /dckr/etc/tasks.d/default && \
+ cp /MetaPalette/Docker/sensitive /dckr/etc/tasks.d/sensitive && \
+ cp /MetaPalette/Docker/specific /dckr/etc/tasks.d/specific && \
+ cp /MetaPalette/Docker/train /dckr/etc/tasks.d/train && \
+ echo -e "\n \n NOTE: Be sure to download the training data at http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/ and uncompress it. The resulting directory should be passed to docker at the location CONT_DATABASES_DIR via: -v /path/to/uncompressed/Data:/dckr/mnt/camiref/CommonKmersData:ro"

@@ -1,0 +1,34 @@
+## here you should call the task(s) that you want to run as default using the following syntax (preferable to a symbolic link)
+# . "$DCKR_TASKS"/mytask1
+#echo 'Default task is empty' 1>&2
+#check if list of input files exist
+if [ ! -f "$CONT_FASTQ_FILE_LISTING" ]
+then
+	echo "List of input files not given. Please include a list of input files at: $CONT_FASTQ_FILE_LISTING" 1>&2
+	exit 0
+fi
+
+#check if Data folder is present
+if [ ! -d /dckr/mnt/camiref/MetaPaletteData ]
+then
+	echo "Data directory missing. Hint, include the following command when starting docker: -v /path/to/local/Data:/dckr/mnt/camiref/MetaPaletteData:ro" 1>&2
+	exit 0
+fi
+
+cd /dckr/mnt/input
+for file in `cat $CONT_FASTQ_FILE_LISTING`
+do
+	#Check if input file exists
+	if [ ! -f $file ]
+	then
+		echo "The file $file does not exist. Please make sure it is accessible in /dckr/mnt/input/. Hint, include the following command when starting docker: -v /path/to/input/dir:/dckr/mnt/input:ro" 1>&2
+		exit 0
+	fi
+	#Classify the sample
+	python /MetaPalette/src/Python/Classify.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -i $file -k default -j /jellyfish/jellyfish-2.2.3/bin/./jellyfish -q /usr/local/bin/./query_per_sequence -Q ${QUALITY:=C} -x -t ${DCKR_THREADS}
+	#Make tree figures
+	python /MetaPalette/src/Python/Plot.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -p ${CONT_PROFILING_FILES}/ -i $file -t ${TAXARANK:=genus} -g ${OUTGROUP:=Halobacterium_sp_DL1}
+	#Make bar plots
+	python /MetaPalette/src/Python/MakeBarChart.py -i ${CONT_PROFILING_FILES}/${file}.profile -o ${CONT_PROFILING_FILES}/
+done
+

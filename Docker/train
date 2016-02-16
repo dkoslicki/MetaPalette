@@ -1,0 +1,36 @@
+## here you should call the task(s) that you want to run as default using the following syntax (preferable to a symbolic link)
+# . "$DCKR_TASKS"/mytask1
+#echo 'Default task is empty' 1>&2
+#check if list of input files exist
+if [ ! -f "$CONT_CONTIGS_FILE_LISTING" ]
+then
+	echo "List of input files not given. Please include a list of input files at: $CONT_CONTIGS_FILE_LISTING" 1>&2
+	exit 0
+fi
+
+#check if Data folder is present
+if [ ! -d /dckr/mnt/input ]
+then
+	echo "Data directory missing. Hint, include the following command when starting docker: -v /path/to/local/Data:/dckr/mnt/input:ro" 1>&2
+	exit 0
+fi
+
+#Create file of full names of sequences
+cd /tmp
+cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} sh -c "echo /dckr/mnt/input/{} >> /tmp/FileNames.txt"
+
+#Create RAM disk for bcalm
+mkdir /ramdisk
+chmod 777 /ramdisk
+mount -t tmpfs -o size=${RAM_DISK_SIZE:=10G} tmpfs /ramdisk/
+
+#Train
+python /MetaPalette/src/Python/Train.py -i /tmp/FileNames.txt -o ${CONT_PROFILING_FILES} -b /usr/local/bin/./bcalm -r /ramdisk/ -j /jellyfish/jellyfish-2.2.3/bin/./jellyfish -c /usr/local/bin/./count_in_file -t ${DCKR_THREADS} -k ${DCKR_THREADS}
+cd /dckr/mnt/input
+
+#Unmount the RAM disk
+umount -v /ramdisk
+
+echo "Be sure to create an acceptable taxonomy. See https://github.com/dkoslicki/MetaPalette for more information"
+
+
