@@ -4,7 +4,7 @@
 MetaPalette is a k-mer based bacterial community reconstruction technique that utilizes sparsity promoting ideas from the field of compressed sensing to reconstruct the composition of a bacterial community. This method allows for strain-level abundance estimation, and can quantify the evolutionary distance between organisms in the sample and in the training database (thereby allowing for successful classification even with incomplete training data).
 
 ## For the impatient ##
-If you wish to simply run MetaPalette to profile a sample and generate tree figures and bar charts, use the following commands (tested on Ubuntu 14.04.3 LTS):
+By far, the easiest way to run MetaPalette is to use Docker. To run MetaPalette on a set of FASTQ/FASTA files contained in the directory ``/input`` and whose file names are listed in ``/input/sample.fq.gz.list``, use the following commands:
 ```bash
 To Do
 ```
