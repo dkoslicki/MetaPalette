@@ -2,9 +2,9 @@
 # . "$DCKR_TASKS"/mytask1
 #echo 'Default task is empty' 1>&2
 #check if list of input files exist
-if [ ! -f "$CONT_FASTQ_FILE_LISTING" ]
+if [ ! -f "$INPUT_LIST_OF_FILE_NAMES" ]
 then
-	echo "List of input files not given. Please include a list of input files at: $CONT_FASTQ_FILE_LISTING" 1>&2
+	echo "List of input files not given. Please include a list of input files at: $INPUT_LIST_OF_FILE_NAMES" 1>&2
 	exit 0
 fi
 
@@ -16,7 +16,7 @@ then
 fi
 
 cd /dckr/mnt/input
-for file in `cat $CONT_FASTQ_FILE_LISTING`
+for file in `cat $INPUT_LIST_OF_FILE_NAMES`
 do
 	#Check if input file exists
 	if [ ! -f $file ]

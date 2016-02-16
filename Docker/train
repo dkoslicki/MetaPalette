@@ -17,7 +17,7 @@ fi
 
 #Create file of full names of sequences
 cd /tmp
-cat $TRAINING_FILES_LIST | xargs -I{} sh -c "echo /dckr/mnt/input/{} >> /tmp/FileNames.txt"
+cat $TRAINING_FILES_LIST | xargs -I{} basename {} | xargs -I{} sh -c "echo /dckr/mnt/input/{} >> /tmp/FileNames.txt"
 
 #Create RAM disk for bcalm
 mkdir /ramdisk
