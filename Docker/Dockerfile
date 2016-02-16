@@ -57,6 +57,9 @@ RUN wget https://github.com/Malfoy/bcalm/archive/1.tar.gz && \
  make && \
  cp bcalm /usr/local/bin
 
+#Make training env variable
+ENV TRAINING_FILES_LIST $DCKR_MNT/input/FileNames.txt
+
 #Create tasks
 RUN cp /MetaPalette/Docker/default /dckr/etc/tasks.d/default && \
  cp /MetaPalette/Docker/sensitive /dckr/etc/tasks.d/sensitive && \

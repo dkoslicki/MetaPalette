@@ -2,9 +2,9 @@
 # . "$DCKR_TASKS"/mytask1
 #echo 'Default task is empty' 1>&2
 #check if list of input files exist
-if [ ! -f "$CONT_CONTIGS_FILE_LISTING" ]
+if [ ! -f "$TRAINING_FILES_LIST" ]
 then
-	echo "List of input files not given. Please include a list of input files at: $CONT_CONTIGS_FILE_LISTING" 1>&2
+	echo "List of input files not given. Please include a list of input files at: $TRAINING_FILES_LIST" 1>&2
 	exit 0
 fi
 
@@ -17,7 +17,7 @@ fi
 
 #Create file of full names of sequences
 cd /tmp
-cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} sh -c "echo /dckr/mnt/input/{} >> /tmp/FileNames.txt"
+cat $TRAINING_FILES_LIST | xargs -I{} sh -c "echo /dckr/mnt/input/{} >> /tmp/FileNames.txt"
 
 #Create RAM disk for bcalm
 mkdir /ramdisk
@@ -30,6 +30,9 @@ cd /dckr/mnt/input
 
 #Unmount the RAM disk
 umount -v /ramdisk
+
+#Delete the counts
+rm -rf ${CONT_PROFILING_FILES}/Counts
 
 echo "Be sure to create an acceptable taxonomy. See https://github.com/dkoslicki/MetaPalette for more information"
 
