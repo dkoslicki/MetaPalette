@@ -3,6 +3,12 @@
 ## What is MetaPalette? ##
 MetaPalette is a k-mer based bacterial community reconstruction technique that utilizes sparsity promoting ideas from the field of compressed sensing to reconstruct the composition of a bacterial community. This method allows for strain-level abundance estimation, and can quantify the evolutionary distance between organisms in the sample and in the training database (thereby allowing for successful classification even with incomplete training data).
 
+## For the impatient ##
+If you wish to simply run MetaPalette to profile a sample and generate tree figures and bar charts, use the following commands (tested on Ubuntu 14.04.3 LTS):
+```bash
+To Do
+```
+
 
 ## How Do I Install MetaPalette? ##
 
@@ -34,7 +40,7 @@ A Dockerfile is included in this repository. See the [Docker homepage](https://w
 
 You can either pull the docker image from DockerHub using
 ```bash
-docker pull dkoslicki/MetaPalette
+docker pull dkoslicki/metapalette
 ```
 
 Or you can build the docker image from the Dockerfile by cloning the repository, starting Docker, and then in the ``MetaPalette/Docker`` folder, using the command:

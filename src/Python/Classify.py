@@ -162,9 +162,9 @@ fid.close()
 #print("Doing format conversion")
 #Convert to CAMI compatible output format
 if kind=="sensitive":
-	cutoff = .0001
+	cutoff = .00001
 else:
-	cutoff = .001
+	cutoff = .0001
 
 #if not os.path.isfile(os.path.join(output_folder,file_base_name+"-x.txt")):
 #	print("Error: Missing x-file: %s" % os.path.join(output_folder,file_base_name+"-x.txt"))
