@@ -1,0 +1,5 @@
+/dckr/mnt/input/G000295395.fna
+/dckr/mnt/input/G000371965.fna
+/dckr/mnt/input/G000528255.fna
+/dckr/mnt/input/G000602785.fna
+/dckr/mnt/input/G000779735.fna

@@ -1,0 +1,43 @@
+<phy:Phyloxml xmlns:phy="http://www.phyloxml.org/1.10/phyloxml.xsd">
+    <phy:phylogeny>
+        <phy:clade>
+            <phy:name></phy:name>
+            <phy:branch_length>0.000000e+00</phy:branch_length>
+            <phy:clade branch_length_attr="0.43646">
+                <phy:name></phy:name>
+                <phy:branch_length>4.364600e-01</phy:branch_length>
+                <phy:confidence type="branch_support">1.0</phy:confidence>
+                <phy:clade branch_length_attr="0.0544837160792">
+                    <phy:name>Staphylococcus_aureus_M0672_0.8548731</phy:name>
+                    <phy:branch_length>5.448372e-02</phy:branch_length>
+                    <phy:confidence type="branch_support">1.0</phy:confidence>
+                    <phy:clade branch_length_attr="0.0725662839208">
+                        <phy:name>Staphylococcus_aureus_M0672</phy:name>
+                        <phy:branch_length>7.256628e-02</phy:branch_length>
+                        <phy:confidence type="branch_support">1.0</phy:confidence>
+                    </phy:clade>
+                </phy:clade>
+                <phy:clade branch_length_attr="0.0544794277111">
+                    <phy:name>Staphylococcus_aureus_F48611_0.8548731</phy:name>
+                    <phy:branch_length>5.447943e-02</phy:branch_length>
+                    <phy:confidence type="branch_support">1.0</phy:confidence>
+                    <phy:clade branch_length_attr="0.0725605722889">
+                        <phy:name>Staphylococcus_aureus_F48611</phy:name>
+                        <phy:branch_length>7.256057e-02</phy:branch_length>
+                        <phy:confidence type="branch_support">1.0</phy:confidence>
+                    </phy:clade>
+                </phy:clade>
+            </phy:clade>
+            <phy:clade branch_length_attr="0.373117913226">
+                <phy:name>Escherichia_coli_0.8548731</phy:name>
+                <phy:branch_length>3.731179e-01</phy:branch_length>
+                <phy:confidence type="branch_support">1.0</phy:confidence>
+                <phy:clade branch_length_attr="0.063342086774">
+                    <phy:name>Escherichia_coli</phy:name>
+                    <phy:branch_length>6.334209e-02</phy:branch_length>
+                    <phy:confidence type="branch_support">1.0</phy:confidence>
+                </phy:clade>
+            </phy:clade>
+        </phy:clade>
+    </phy:phylogeny>
+</phy:Phyloxml>
