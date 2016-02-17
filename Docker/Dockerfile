@@ -29,7 +29,7 @@ RUN apt-get -y update && \
  cp /jellyfish/jellyfish-2.2.3/bin/jellyfish /usr/local/bin
 
 #Install ete3
-RUN apt-get install -y python-numpy python-qt4 python-lxml python-six && \
+RUN apt-get install -y python-numpy python-qt4 python-lxml python-six python-matplotlib && \
  #easy_install -U ete3 && \
  easy_install -U ete2
 
