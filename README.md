@@ -56,7 +56,7 @@ docker run --rm \
 ###Training Data###
 You can optionally download [pre-trained data](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/). Pre-trained data for Archaea, Bacteria, Eukaryota, and viruses are included.
 
-###Build from source###
+####Build from source####
 You will need the k-mer counting tool Jellyfish to be installed. Please see [the Jellyfish installation page](http://www.genome.umd.edu/jellyfish.html) for installation directions. Briefly, this can be installed using:
 
 ```bash
@@ -76,7 +76,7 @@ You will need to compile the C code ``query_per_sequence``. This can be accompli
 g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs query_per_sequence.cc sequence_mers.hpp -l jellyfish-2.0 -l pthread -o query_per_sequence
 ```
 
-###Or Use Docker###
+####Or Use Docker####
 A Dockerfile is included in this repository. See the [Docker homepage](https://www.docker.com/) for more information.
 
 You can either pull the docker image from DockerHub using
