@@ -37,7 +37,7 @@ The resulting profile, tree plots, and bar charts will be contained in ``~/MetaP
 To run MetaPalette using one of the [pre-trained databases](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/), use the following:
 ```bash
 cd ~
-wget http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/Bacteria.tar.gz
+wget http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/Bacteria.tar.gz #Or Archaea.tar.gz, Eukaryota.tar.gz, Viruses.tar.gz, Comparison.tar.gz (for the training database used in the paper for comparison purposes)
 tar -xf Bacteria.tar.gz 
 docker run --rm \
 -e "QUALITY=C" \
