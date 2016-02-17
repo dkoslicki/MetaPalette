@@ -4,10 +4,35 @@
 MetaPalette is a k-mer based bacterial community reconstruction technique that utilizes sparsity promoting ideas from the field of compressed sensing to reconstruct the composition of a bacterial community. This method allows for strain-level abundance estimation, and can quantify the evolutionary distance between organisms in the sample and in the training database (thereby allowing for successful classification even with incomplete training data).
 
 ## For the impatient ##
-By far, the easiest way to run MetaPalette is to use Docker. To run MetaPalette on a set of FASTQ/FASTA files contained in the directory ``/input`` and whose file names are listed in ``/input/sample.fq.gz.list``, use the following commands:
+By far, the easiest way to run MetaPalette is to use Docker. The following demonstrates running MetaPalette on the included data:
 ```bash
-To Do
+#Get the Docker container
+docker pull dkoslicki/metapalette
+
+#Get the test data
+cd ~
+git clone https://github.com/dkoslicki/MetaPalette.git
+
+#Train using MetaPalette
+docker run --rm --privileged \
+-e "DCKR_THREADS=10" \
+-e "RAM_DISK_SIZE=10G" \
+-v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \
+-v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/output:rw \
+-t dkoslicki/metapalette train 
+
+#Classify using MetaPalette
+docker run --rm \
+-e "QUALITY=C" \
+-e "DCKR_THREADS=10" \
+-e "TAXARANK=genus" \
+-e "OUTGROUP=Escherichia_coli" \
+-v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/MetaPaletteData:ro \
+-v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/output:rw \
+-v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \
+-t dkoslicki/metapalette default 
 ```
+The resulting profile, tree plots, and bar charts will be contained in ``~/MetaPalette/Tests/TestOutput``.
 
 
 ## How Do I Install MetaPalette? ##
