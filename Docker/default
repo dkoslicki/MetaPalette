@@ -27,8 +27,14 @@ do
 	#Classify the sample
 	python /MetaPalette/src/Python/Classify.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -i $file -k default -j /jellyfish/jellyfish-2.2.3/bin/./jellyfish -q /usr/local/bin/./query_per_sequence -Q ${QUALITY:=C} -x -t ${DCKR_THREADS}
 	#Make tree figures
-	python /MetaPalette/src/Python/Plot.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -p ${CONT_PROFILING_FILES}/ -i $file -t ${TAXARANK:=genus} -g ${OUTGROUP:=Halobacterium_sp_DL1}
+	xvfb-run python /MetaPalette/src/Python/Plot.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -p ${CONT_PROFILING_FILES}/ -i $file -t ${TAXARANK:=genus} -g ${OUTGROUP:=Halobacterium_sp_DL1}
 	#Make bar plots
 	python /MetaPalette/src/Python/MakeBarChart.py -i ${CONT_PROFILING_FILES}/${file}.profile -o ${CONT_PROFILING_FILES}/
+	#Remove stuff we don't need
+	rm ${CONT_PROFILING_FILES}/${file}-x.txt
+	rm ${CONT_PROFILING_FILES}/${file}-y30.txt
+	rm ${CONT_PROFILING_FILES}/${file}-y50.txt
+	rm ${CONT_PROFILING_FILES}/${file}-30mers.jf
+	rm ${CONT_PROFILING_FILES}/${file}-50mers.jf
 done
 
