@@ -9,7 +9,7 @@ then
 fi
 
 #check if Data folder is present
-if [ ! -d /dckr/mnt/camiref/MetaPaletteData ]
+if [ ! -d /dckr/mnt/MetaPaletteData ]
 then
 	echo "Data directory missing. Hint, include the following command when starting docker: -v /path/to/local/Data:/dckr/mnt/camiref/MetaPaletteData:ro" 1>&2
 	exit 0
@@ -25,9 +25,9 @@ do
 		exit 0
 	fi
 	#Classify the sample
-	python /MetaPalette/src/Python/Classify.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -i $file -k default -j /jellyfish/jellyfish-2.2.3/bin/./jellyfish -q /usr/local/bin/./query_per_sequence -Q ${QUALITY:=C} -x -t ${DCKR_THREADS}
+	python /MetaPalette/src/Python/Classify.py -d ${TRAINED_DATA}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -i $file -k default -j /jellyfish/jellyfish-2.2.3/bin/./jellyfish -q /usr/local/bin/./query_per_sequence -Q ${QUALITY:=C} -x -t ${DCKR_THREADS}
 	#Make tree figures
-	xvfb-run python /MetaPalette/src/Python/Plot.py -d ${CONT_DATABASES_DIR}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -p ${CONT_PROFILING_FILES}/ -i $file -t ${TAXARANK:=genus} -g ${OUTGROUP:=Halobacterium_sp_DL1}
+	xvfb-run python /MetaPalette/src/Python/Plot.py -d ${TRAINED_DATA}/MetaPaletteData -o ${CONT_PROFILING_FILES}/ -p ${CONT_PROFILING_FILES}/ -i $file -t ${TAXARANK:=genus} -g ${OUTGROUP:=Halobacterium_sp_DL1}
 	#Make bar plots
 	python /MetaPalette/src/Python/MakeBarChart.py -i ${CONT_PROFILING_FILES}/${file}.profile -o ${CONT_PROFILING_FILES}/
 	#Remove stuff we don't need
