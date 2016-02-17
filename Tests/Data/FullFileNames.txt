@@ -1,5 +1,0 @@
-Data/G000295395.fna
-Data/G000371965.fna
-Data/G000528255.fna
-Data/G000602785.fna
-Data/G000779735.fna
