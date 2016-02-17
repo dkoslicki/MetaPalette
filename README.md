@@ -32,7 +32,7 @@ docker run --rm \
 -v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \
 -t dkoslicki/metapalette default 
 ```
-The resulting profile, tree plots, and bar charts will be contained in ``~/MetaPalette/Tests/TestOutput``.
+The resulting profile, tree plots, and bar charts will be contained in ``~/MetaPalette/Tests/TestOutput``. Compare with the pre-computed results in ``~/MetaPalette/Tests/Output``.
 
 
 ## How Do I Install MetaPalette? ##
