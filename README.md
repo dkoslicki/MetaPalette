@@ -34,7 +34,7 @@ docker run --rm \
 ```
 The resulting profile, tree plots, and bar charts will be contained in ``~/MetaPalette/Tests/TestOutput``. Compare with the pre-computed results in ``~/MetaPalette/Tests/Output``.
 
-To run MetaPalette using one of the pre-trained databases, use the following:
+To run MetaPalette using one of the [pre-trained databases](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/), use the following:
 ```bash
 cd ~
 wget http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/Bacteria.tar.gz
@@ -48,7 +48,7 @@ docker run --rm \
 -v ~/path/to/output/folder:/dckr/mnt/output:rw \ #Where you want the results to be saved
 -v ~/path/to/input/folder:/dckr/mnt/input:ro \ #Where the input sample files live. A file ~/path/to/input/folder/InputFileNames.txt MUST be present that gives a list of the sample files you wish to analyze
 -t dkoslicki/metapalette default
-```bash
+```
 
 
 ## How Do I Install MetaPalette? ##
