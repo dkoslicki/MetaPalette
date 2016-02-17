@@ -53,7 +53,7 @@ docker run --rm \
 
 ## How Do I Install MetaPalette? ##
 
-###Training Data###
+####Training Data####
 You can optionally download [pre-trained data](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/). Pre-trained data for Archaea, Bacteria, Eukaryota, and viruses are included.
 
 ####Build from source####
