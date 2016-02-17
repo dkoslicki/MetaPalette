@@ -17,8 +17,8 @@ git clone https://github.com/dkoslicki/MetaPalette.git
 docker run --rm --privileged \
 -e "DCKR_THREADS=10" \
 -e "RAM_DISK_SIZE=10G" \
--v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \
--v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/output:rw \
+-v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \ #Where the input training files live. Note the required file FileNames.txt listing the names of the training files.
+-v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/output:rw \ #Where you want the results to be saved
 -t dkoslicki/metapalette train 
 
 #Classify using MetaPalette
@@ -27,12 +27,28 @@ docker run --rm \
 -e "DCKR_THREADS=10" \
 -e "TAXARANK=genus" \
 -e "OUTGROUP=Escherichia_coli" \
--v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/MetaPaletteData:ro \
--v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/output:rw \
--v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \
+-v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/MetaPaletteData:ro \ #Location of the training data
+-v ~/MetaPalette/Tests/TestOutput:/dckr/mnt/output:rw \ #Where you want the results to be saved
+-v ~/MetaPalette/Tests/Data:/dckr/mnt/input:ro \ #Where the input sample files live. Note the required file InputFileNames.txt that gives a list of the sample files you wish to analyze.
 -t dkoslicki/metapalette default 
 ```
 The resulting profile, tree plots, and bar charts will be contained in ``~/MetaPalette/Tests/TestOutput``. Compare with the pre-computed results in ``~/MetaPalette/Tests/Output``.
+
+To run MetaPalette using one of the pre-trained databases, use the following:
+```bash
+cd ~
+wget http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/Bacteria.tar.gz
+tar -xf Bacteria.tar.gz 
+docker run --rm \
+-e "QUALITY=C" \
+-e "DCKR_THREADS=48" \
+-e "TAXARANK=species" \
+-e "OUTGROUP=Halobacterium_sp_DL1" \
+-v ~/Bacteria:/dckr/mnt/MetaPaletteData:ro \ #Location of the training data
+-v ~/path/to/output/folder:/dckr/mnt/output:rw \ #Where you want the results to be saved
+-v ~/path/to/input/folder:/dckr/mnt/input:ro \ #Where the input sample files live. A file ~/path/to/input/folder/InputFileNames.txt MUST be present that gives a list of the sample files you wish to analyze
+-t dkoslicki/metapalette default
+```bash
 
 
 ## How Do I Install MetaPalette? ##
