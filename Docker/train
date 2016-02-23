@@ -34,6 +34,9 @@ umount -v /ramdisk
 #Delete the counts
 rm -rf ${CONT_PROFILING_FILES}/Counts
 
+#change permissions on Bcalms
+chmod 777 ${CONT_PROFILING_FILES}/Bcalms
+
 echo "Be sure to create an acceptable taxonomy. See https://github.com/dkoslicki/MetaPalette for more information"
 
 

@@ -54,6 +54,7 @@ RUN git clone https://github.com/dkoslicki/MetaPalette.git && \
 RUN wget https://github.com/Malfoy/bcalm/archive/1.tar.gz && \
  tar -zxf 1.tar.gz && \
  cd BCALM-1 && \
+ sed -i 's/-march=native//g' makefile && \
  make && \
  cp bcalm /usr/local/bin
 
