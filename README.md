@@ -70,9 +70,10 @@ make
 ```
 The binary will then be located in ``jellyfish-2.2.3/bin/``.
 
-You will need to compile the C code ``query_per_sequence``. This can be accomplished with a command such as:
+You will need to compile the C code ``query_per_sequence`` contained in ``MetaPalette/src/QueryPerSeq/`` (not the code in the Jellyfish examples). This can be accomplished with a command such as:
 
 ```bash
+cd MetaPalette/src/QueryPerSeq
 g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs query_per_sequence.cc sequence_mers.hpp -l jellyfish-2.0 -l pthread -o query_per_sequence
 ```
 
@@ -213,6 +214,7 @@ This will automatically download all Archaea, Bacteria, Eukaryota, and viruses, 
 The ``/MetaPalette/src/CountInFile/count_in_file.cc`` code can be compiled using a command like:
 
 ```bash
+cd MetaPalette/src/CountInFile
 g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs count_in_file.cc -l jellyfish-2.0 -l pthread -o count_in_file
 ```
 
