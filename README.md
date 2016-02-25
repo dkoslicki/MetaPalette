@@ -76,6 +76,15 @@ You will need to compile the C code ``query_per_sequence``. This can be accompli
 g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs query_per_sequence.cc sequence_mers.hpp -l jellyfish-2.0 -l pthread -o query_per_sequence
 ```
 
+The plotting features require [ETE2](http://etetoolkit.org/) and a few other dependencies which can be installed with something like:
+
+```bash
+sudo apt-get install -y python-numpy python-qt4 python-lxml python-six python-matplotlib
+easy_install -U ete2
+apt-get install -y python-numpy python-scipy python-dev python-pip
+apt-get install -y python-h5py
+```
+
 ####Or Use Docker####
 A Dockerfile is included in this repository. See the [Docker homepage](https://www.docker.com/) for more information.
 
