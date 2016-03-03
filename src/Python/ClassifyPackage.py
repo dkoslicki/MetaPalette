@@ -41,12 +41,13 @@ def Classify(training_file_names, CKM_matrices, Y_norms):
 	
 	y = np.concatenate([Y_norms[i][basis] for i in range(len(Y_norms))])
 	column_basis = np.matlib.repmat(basis, 1, len(thresholds)+1).flatten()
-	xtemp = scipy.optimize.nnls(A_with_hypothetical[np.concatenate(tuple(basis for i in range(len(kmer_sizes))),axis=0),:][:,column_basis],y)[0] #Added change in x term
+	#Non-sparsity promoting
+	#xtemp = scipy.optimize.nnls(A_with_hypothetical[np.concatenate(tuple(basis for i in range(len(kmer_sizes))),axis=0),:][:,column_basis],y)[0]
 
 	#Sparsity promoting
 	Atemp=A_with_hypothetical[np.concatenate(tuple(basis for i in range(len(kmer_sizes))),axis=0),:][:,column_basis];
 	lam=200;
-	xtemp = scipy.optimize.nnls(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)))[0] #Added change in x term
+	xtemp = scipy.optimize.nnls(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)))[0]
 
 	#create vector on full basis
 	x = np.zeros(len(training_file_names)*(len(thresholds)+1))
