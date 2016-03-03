@@ -331,8 +331,8 @@ for taxa_name in taxa_names:
 	taxPath = map(lambda x: x.split("_")[2],taxa_name.split("|")) #Tax ID's
 	taxPathSN = map(lambda x: "_".join(x.split("_")[3:]), taxa_name.split("|")) #Taxa names
 	#If a Tax ID is repeated at a lower taxonomic rank, this means that that rank is missing, so let's just delete it.
-	for i in range(len(taxPath)-1,1,-1):
-		if i>=2:
+	for i in range(len(taxPath)-1,0,-1):
+		if i>=1:
 			if taxPath[i] == taxPath[i-1]:
 				taxPath[i] = ""
 				taxPathSN[i] = ""
