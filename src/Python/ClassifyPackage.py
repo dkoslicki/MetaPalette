@@ -8,7 +8,7 @@ import h5py
 import numpy.matlib
 import scipy.optimize
 
-def Classify(training_file_names, CKM_matrices, Y_norms):
+def Classify(training_file_names, CKM_matrices, Y_norms, cutoff):
 #	file_base_name = os.path.basename(input_file_name)
 	thresholds=[.90,.80,.70,.60,.50,.40,.30,.20,.10]
 	kmer_sizes = [30,50]
@@ -34,7 +34,7 @@ def Classify(training_file_names, CKM_matrices, Y_norms):
 	A_with_hypothetical = np.concatenate(A_with_hypotheticals, axis=0)
 	
 	#Reduce basis
-	basis = Y_norms[kmer_sizes.index(min(kmer_sizes))]>.0001
+	basis = Y_norms[kmer_sizes.index(min(kmer_sizes))]>cutoff
 	if not any(basis):
 		print("Error: no organisms detected. Most likely sequencing depth is too low, or error rate is too high")
 		sys.exit(2)

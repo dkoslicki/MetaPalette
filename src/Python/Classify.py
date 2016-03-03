@@ -144,8 +144,13 @@ for kmer_size in kmer_sizes:
 	fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
 	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
 
+if kind=="sensitive":
+	cutoff = .0001
+else:
+	cutoff = .001
+
 #Do the classification
-x = ClassifyPackage.Classify(training_file_names, CKM_matrices, Y_norms)
+x = ClassifyPackage.Classify(training_file_names, CKM_matrices, Y_norms, cutoff)
 
 #Normalize the result
 if normalize or (x.sum()>1):
@@ -161,10 +166,6 @@ fid.close()
 #################################################################################################
 #print("Doing format conversion")
 #Convert to CAMI compatible output format
-if kind=="sensitive":
-	cutoff = .00001
-else:
-	cutoff = .0001
 
 #if not os.path.isfile(os.path.join(output_folder,file_base_name+"-x.txt")):
 #	print("Error: Missing x-file: %s" % os.path.join(output_folder,file_base_name+"-x.txt"))
