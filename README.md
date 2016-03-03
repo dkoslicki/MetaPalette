@@ -105,7 +105,7 @@ docker build -t username/imagename .
 To classify a sample, use the ``Classify.py`` command located in ``MetaPalette/src/Python``. An example of running the program in the sensitive mode using 48 threads and a minimum quality score (for kmers to be counted) of C (phred33 ascii code 35) is given by
 
 ```bash
-python Classify.py -d /path/to/MetaPaletteData/ -o /path/to/output/file.profile -i /path/to/input/file.fastq -Q C -k sensitive -j /path/to/./jellyfish -q /path/to/./query_per_sequence -t 48 -n 
+python Classify.py -d /path/to/MetaPaletteData/ -o /path/to/output_folder/ -i /path/to/input/file.fastq -Q C -k sensitive -j /path/to/./jellyfish -q /path/to/./query_per_sequence -t 48 -n 
 ```
 
 FASTQ and FASTA files are acceptable input. Note that if FASTA files are used, no error correction will be done (which can lead to poor results).
