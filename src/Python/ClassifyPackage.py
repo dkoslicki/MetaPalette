@@ -47,7 +47,11 @@ def Classify(training_file_names, CKM_matrices, Y_norms, cutoff):
 	#Sparsity promoting
 	Atemp=A_with_hypothetical[np.concatenate(tuple(basis for i in range(len(kmer_sizes))),axis=0),:][:,column_basis];
 	lam=200;
-	xtemp = scipy.optimize.nnls(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)))[0]
+	#xtemp = scipy.optimize.nnls(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)))[0]
+	
+	res = scipy.optimize.lsq_linear(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)), bounds=(0,np.inf), method='bvls', verbose=0)
+	xtemp = res.x
+
 
 	#create vector on full basis
 	x = np.zeros(len(training_file_names)*(len(thresholds)+1))

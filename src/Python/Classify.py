@@ -110,7 +110,7 @@ def form_y_star(arg):
 
 #Form the Y files
 Y_norms = list()
-if re_run and all([os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt") for kmer_size in kmer_sizes]):
+if re_run and all([os.path.isfile(os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt")) for kmer_size in kmer_sizes]):
 	for kmer_size in kmer_sizes:
 		fid = open(os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt"),'r')
 		Y = fid.readlines()
@@ -127,10 +127,13 @@ else:
 			count_kmers(input_file_name, kmer_size)
 	#Form the y-files
 	for kmer_size in kmer_sizes:
+		total_kmers = int(subprocess.check_output(jellyfish_binary + " stats " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"), shell = True).split()[5])
+		if not total_kmers>0:
+			print("Error: no k-mer counted. Decrease quality threshold and try again")
+			sys.exit(2)
 		pool = Pool(processes = num_threads)
 		Y = np.array(pool.map(form_y_star, izip(training_file_names, repeat(kmer_size))), dtype=np.float64)
 		pool.close()
-		total_kmers = int(subprocess.check_output(jellyfish_binary + " stats " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"), shell = True).split()[5])
 		Y_norm = Y/total_kmers
 		Y_norms.append(Y_norm)
 		fid = open(os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt"),'w')
