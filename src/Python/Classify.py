@@ -125,12 +125,12 @@ else:
 			print("Skipping kmer counting step")
 		else:
 			count_kmers(input_file_name, kmer_size)
-	#Form the y-files
-	for kmer_size in kmer_sizes:
 		total_kmers = int(subprocess.check_output(jellyfish_binary + " stats " + os.path.join(output_folder,file_base_name+"-"+str(kmer_size)+"mers.jf"), shell = True).split()[5])
 		if not total_kmers>0:
 			print("Error: no k-mer counted. Decrease quality threshold and try again")
 			sys.exit(2)
+	#Form the y-files
+	for kmer_size in kmer_sizes:
 		pool = Pool(processes = num_threads)
 		Y = np.array(pool.map(form_y_star, izip(training_file_names, repeat(kmer_size))), dtype=np.float64)
 		pool.close()
