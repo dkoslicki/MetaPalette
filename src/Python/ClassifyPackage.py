@@ -49,7 +49,8 @@ def Classify(training_file_names, CKM_matrices, Y_norms, cutoff):
 	lam=200;
 	#xtemp = scipy.optimize.nnls(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)))[0]
 	
-	res = scipy.optimize.lsq_linear(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)), bounds=(0,np.inf), method='bvls', verbose=0)
+	#res = scipy.optimize.lsq_linear(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)), bounds=(0,np.inf), method='bvls', verbose=0)
+	res = scipy.optimize.lsq_linear(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)), bounds=(0,np.inf), method='bvls', max_iter=500, verbose=0)
 	xtemp = res.x
 
 
