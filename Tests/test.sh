@@ -2,7 +2,7 @@
 #If in a Docker container, run with: xvfb-run ./test.sh
 
 #Test training
-python ../src/Python/Train.py -i Data/FullFileNames.txt -o TestOutput -b bcalm -r `pwd` -j jellyfish -c count_in_file -t 4 -k 5 -s 4
+python ../src/Python/Train.py -i Data/FileNames.txt -o TestOutput -b bcalm -r `pwd` -j jellyfish -c count_in_file -t 4 -k 5 -s 4
 
 #Write code to check if output makes sense
 
