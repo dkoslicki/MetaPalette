@@ -261,19 +261,19 @@ for support_index in support:
 				elif hyp_thresh == .8:
 					LCA = len(hyp_taxonomy_split)-1
 				elif hyp_thresh == .7:
-					LCA = max([1, length(hyp_taxonomy_split)-1])-1
+					LCA = max([1, len(hyp_taxonomy_split)-1])-1
 				elif hyp_thresh == .6:
-					LCA = max([1, length(hyp_taxonomy_split)-2])-1
+					LCA = max([1, len(hyp_taxonomy_split)-2])-1
 				elif hyp_thresh == .5:
-					LCA = max([1, length(hyp_taxonomy_split)-2])-1
+					LCA = max([1, len(hyp_taxonomy_split)-2])-1
 				elif hyp_thresh == .4:
-					LCA = max([1, length(hyp_taxonomy_split)-2])-1
+					LCA = max([1, len(hyp_taxonomy_split)-2])-1
 				elif hyp_thresh == .3:
-					LCA = max([1, length(hyp_taxonomy_split)-2])-1
+					LCA = max([1, len(hyp_taxonomy_split)-2])-1
 				elif hyp_thresh == .2:
-					LCA = max([1, length(hyp_taxonomy_split)-3])-1
+					LCA = max([1, len(hyp_taxonomy_split)-3])-1
 				elif hyp_thresh == .1:
-					LCA = max([1, length(hyp_taxonomy_split)-4])-1
+					LCA = max([1, len(hyp_taxonomy_split)-4])-1
 			else:
 				error("invalid kind (-k) option. Options are: default, sensitive, specific")
 		#Now update the taxonomy dictionary
