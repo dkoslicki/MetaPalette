@@ -37,6 +37,7 @@ for opt, arg in opts:
 		outgroup = arg
 
 kmer_sizes=[30,50]
+cutoff = .0001
 #Get name of the file of interest
 input_file_basename = os.path.basename(input_file_name)
 
@@ -136,7 +137,7 @@ if taxon == "species":
 			Y_norms_reduced.append(Y_norms[0][select_indicies])
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
 			print("Creating NJ tree and plot for " + specie)
-			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
+			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced, cutoff)
 			sum_x = sum(x)
 			#Normalize the x vector
 			x = map(lambda y: y/sum(x),x)
@@ -164,7 +165,7 @@ elif taxon == "genus":
 			Y_norms_reduced.append(Y_norms[0][select_indicies])
 			Y_norms_reduced.append(Y_norms[1][select_indicies])
 			print("Creating NJ tree and plot for " + genus)
-			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced)
+			x = ClassifyPackage.Classify(organism_names_reduced, CKM_matrices_reduced, Y_norms_reduced, cutoff)
 			sum_x = sum(x)
 			#Normalize the x vector
 			x = map(lambda y: y/sum(x),x)
