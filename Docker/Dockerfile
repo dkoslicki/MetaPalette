@@ -17,6 +17,8 @@ RUN apt-get -y update && \
  apt-get install -y python && \
  apt-get install -y python-numpy python-scipy python-dev python-pip && \
  easy_install -f http://biopython.org/DIST/ biopython
+ apt-get install libatlas-base-dev gfortran && \ 
+ pip install --upgrade scipy
 
 #Install Jellyfish
 RUN apt-get -y update && \ 
@@ -32,8 +34,6 @@ RUN apt-get -y update && \
 RUN apt-get install -y python-numpy python-qt4 python-lxml python-six python-matplotlib && \
  #easy_install -U ete3 && \
  easy_install -U ete2 && \
- apt-get install libatlas-base-dev gfortran && \ 
- pip install --upgrade scipy
 
 #Install X server for ETE
 RUN apt-get install -y xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps
