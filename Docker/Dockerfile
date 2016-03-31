@@ -17,7 +17,7 @@ RUN apt-get -y update && \
  apt-get install -y python && \
  apt-get install -y python-numpy python-scipy python-dev python-pip && \
  easy_install -f http://biopython.org/DIST/ biopython && \
- apt-get install libatlas-base-dev gfortran && \ 
+ apt-get install -y libatlas-base-dev gfortran && \ 
  pip install --upgrade scipy
 
 #Install Jellyfish
