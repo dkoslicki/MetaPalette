@@ -52,6 +52,11 @@ def Classify(training_file_names, CKM_matrices, Y_norms, cutoff):
 	#res = scipy.optimize.lsq_linear(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)), bounds=(0,np.inf), method='bvls', verbose=0)
 	res = scipy.optimize.lsq_linear(np.concatenate((np.ones((1,Atemp.shape[1])),lam*Atemp)),np.concatenate((np.zeros(1),lam*y)), bounds=(0,np.inf), method='bvls', max_iter=500, verbose=0)
 	xtemp = res.x
+	
+	#Sometimes there are entries very close to zero, but negative. Remove them
+	for i in range(len(xtemp)):
+		if xtemp[i]<0:
+			xtemp[i]=0
 
 
 	#create vector on full basis
