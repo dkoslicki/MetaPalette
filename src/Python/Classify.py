@@ -136,7 +136,7 @@ else:
 		pool.close()
 		Y_norm = Y/total_kmers
 		Y_norms.append(Y_norm)
-		fid = open(os.path.join(output_folder,file_base_name+"-y"+str(kmer_size)+".txt"),'w')
+		fid = open(os.path.join(output_folder, file_base_name+"-y"+str(kmer_size)+".txt"), 'w')
 		for i in range(len(Y_norm)):
 			fid.write(str(Y_norm[i])+"\n")
 		fid.close()
@@ -144,11 +144,11 @@ else:
 #Load the common kmer matrices
 CKM_matrices = list()
 for kmer_size in kmer_sizes:
-	fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
-	CKM_matrices.append(np.array(fid["common_kmers"][:,:], dtype = np.float64))
+	fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"), 'r')
+	CKM_matrices.append(np.array(fid["common_kmers"][:, :], dtype=np.float64))
 
 if kind=="sensitive":
-	cutoff = .0001
+	cutoff = .0009
 else:
 	cutoff = .001
 
@@ -156,11 +156,11 @@ else:
 x = ClassifyPackage.Classify(training_file_names, CKM_matrices, Y_norms, cutoff)
 
 #Normalize the result
-if normalize or (x.sum()>1):
-	x=x/x.sum()
+if normalize or (x.sum() > 1):
+	x = x/x.sum()
 
 #Write x_file
-fid = open(os.path.join(output_folder,file_base_name+"-x.txt"),'w')
+fid = open(os.path.join(output_folder,file_base_name+"-x.txt"), 'w')
 for i in range(len(x)):
 	fid.write(str(x[i]) + "\n")
 
@@ -181,10 +181,12 @@ fid.close()
 #	input.append(float(line.strip()))
 #fid.close()
 
-input = [x[i] for i in range(len(x))]
+# Since we are making the support cutoff to be .001 or .0009, let's normalize first so we aren't getting rid of true signal
+# just because not a large percentage of the sample was clasified.
+input = [x[i]/np.sum(x) for i in range(len(x))]
 
 #Next, read in the taxonomy file
-fid = open(os.path.join(data_dir,"Taxonomy.txt"),"r")
+fid = open(os.path.join(data_dir, "Taxonomy.txt"), "r")
 taxonomy = []
 for line in fid:
 	taxonomy.append(line.strip().split()[2])
@@ -192,15 +194,15 @@ for line in fid:
 fid.close()
 
 num_organisms = len(taxonomy)
-support = np.where(np.array(input).flatten()> cutoff)[0]
+support = np.where(np.array(input).flatten() > cutoff)[0]
 
 #Do the non-hypothetical organisms first, populating the species and strains
 #Then do the the hypothetical organisms, doing the LCA, populating some of the higher taxonomy levels
 #Then starting at the bottom, increment (or create, as the case may be) the higher taxonomic levels
 #Then write the output.
 kmer_size = 30
-fid = h5py.File(os.path.join(data_dir,"CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
-A = np.array(fid["common_kmers"][:,:], dtype = np.float64)
+fid = h5py.File(os.path.join(data_dir, "CommonKmerMatrix-"+str(kmer_size)+"mers.h5"),'r')
+A = np.array(fid["common_kmers"][:,:], dtype=np.float64)
 fid.close()
 common_kmer_matrix_normalized = A/np.diag(A)
 output_taxonomy = dict()
