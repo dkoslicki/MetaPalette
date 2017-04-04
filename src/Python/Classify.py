@@ -183,7 +183,7 @@ fid.close()
 
 # Since we are making the support cutoff to be .001 or .0009, let's normalize first so we aren't getting rid of true signal
 # just because not a large percentage of the sample was clasified.
-input = [x[i]/np.sum(x) for i in range(len(x))]
+input = [x[i] for i in range(len(x))]
 
 #Next, read in the taxonomy file
 fid = open(os.path.join(data_dir, "Taxonomy.txt"), "r")
@@ -194,7 +194,7 @@ for line in fid:
 fid.close()
 
 num_organisms = len(taxonomy)
-support = np.where(np.array(input).flatten() > cutoff)[0]
+support = np.where(np.array(input).flatten() > cutoff/10.)[0]
 
 #Do the non-hypothetical organisms first, populating the species and strains
 #Then do the the hypothetical organisms, doing the LCA, populating some of the higher taxonomy levels
@@ -277,7 +277,7 @@ for support_index in support:
 				elif hyp_thresh == .1:
 					LCA = max([1, len(hyp_taxonomy_split)-4])-1
 			else:
-				error("invalid kind (-k) option. Options are: default, sensitive, specific")
+				Exception("invalid kind (-k) option. Options are: default, sensitive, specific")
 		#Now update the taxonomy dictionary
 		LCA_taxonomy = "|".join(candidate_LCA_taxnonmy_split[0:LCA+1])
 		if LCA_taxonomy in output_taxonomy: #If it's in there, add to it.
