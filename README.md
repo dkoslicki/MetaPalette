@@ -53,10 +53,10 @@ docker run --rm \
 
 ## How Do I Install MetaPalette? ##
 
-####Training Data####
+#### Training Data ####
 You can optionally download [pre-trained data](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/). Pre-trained data for Archaea, Bacteria, Eukaryota, and viruses are included.
 
-####Build from source####
+#### Build from source ####
 You will need the k-mer counting tool Jellyfish to be installed. Please see [the Jellyfish installation page](http://www.genome.umd.edu/jellyfish.html) for installation directions. Briefly, this can be installed using:
 
 ```bash
@@ -86,7 +86,7 @@ apt-get install -y python-numpy python-scipy python-dev python-pip
 apt-get install -y python-h5py
 ```
 
-####Or Use Docker####
+#### Or Use Docker ####
 A Dockerfile is included in this repository. See the [Docker homepage](https://www.docker.com/) for more information.
 
 You can either pull the docker image from DockerHub using
@@ -101,7 +101,7 @@ docker build -t username/imagename .
 
 
 ## Running the program ##
-####From the command line####
+#### From the command line ####
 To classify a sample, use the ``Classify.py`` command located in ``MetaPalette/src/Python``. An example of running the program in the sensitive mode using 48 threads and a minimum quality score (for kmers to be counted) of C (phred33 ascii code 35) is given by
 
 ```bash
@@ -112,7 +112,7 @@ FASTQ and FASTA files are acceptable input. Note that if FASTA files are used, n
 
 The optional flag ``-n`` will normalize the output profile to sum to 1 (so it will appear that 100% of the sample has been classified). This is similar to the default options of MetAPhlAn.
 
-####Plotting Results####
+#### Plotting Results ####
 To generate tree figures, after running ``Classify.py``, use the following commands:
 
 ```bash
@@ -130,7 +130,7 @@ python MakeBarChart.py -i /path/to/file.fastq.profile -o /path/to/outputFolder
 ```
 
 
-####Using Docker####
+#### Using Docker ####
 To run the tool from docker, mount the appropriate folders and run using the following command:
 ```bash
 docker run --rm -e "QUALITY=C" -e "DCKR_THREADS=48" -v /path/to/MetaPaletteData:/dckr/mnt/camiref/MetaPaletteData:ro -v /path/to/Output:/dckr/mnt/output:rw -v /path/to/Input:/dckr/mnt/input:ro -t username/imagename [type]
@@ -169,7 +169,7 @@ If you wish to use a custom training database, the following steps must be perfo
 
 Alternatively, you can use Docker (though an acceptable taxonomy still needs to be created).
 
-####Install Bcalm####
+#### Install Bcalm ####
 To install Bcalm, do something like the following:
 ```bash
 wget https://github.com/Malfoy/bcalm/archive/1.tar.gz && \
@@ -180,7 +180,7 @@ wget https://github.com/Malfoy/bcalm/archive/1.tar.gz && \
 ```
 Note that the [current Bcalm git repository](https://github.com/Malfoy/bcalm) does not compile correctly, so you must install from the release.
 
-####Creating custom taxonomy####
+#### Creating custom taxonomy ####
 For each genome in ``FileNames.txt`` (and in the same order), a taxonomy file must be created. This file MUST be a newline delimitated file with each line having the following format:
 ```bash
 <organismName>\t<TaxID>\t<TaxPath>
@@ -210,7 +210,7 @@ For your convenience, scripts are included in ``MetaPalette/src/NCBIDatabase`` t
 ```
 This will automatically download all Archaea, Bacteria, Eukaryota, and viruses, and create the corresponding ``Taxonomy.txt`` files.
 
-####Compile the ``count_in_file`` code####
+#### Compile the ``count_in_file`` code ####
 The ``/MetaPalette/src/CountInFile/count_in_file.cc`` code can be compiled using a command like:
 
 ```bash
@@ -218,7 +218,7 @@ cd MetaPalette/src/CountInFile
 g++ -I /jellyfish/jellyfish-2.2.3/include -std=c++0x -Wall -O3 -L /jellyfish/jellyfish-2.2.3/.libs -Wl,--rpath=/jellyfish/jellyfish-2.2.3/.libs count_in_file.cc -l jellyfish-2.0 -l pthread -o count_in_file
 ```
 
-####Run the script ``Train.py``####
+#### Run the script ``Train.py`` ####
 The script ``Train.py`` can be called using a command such as:
 ```bash
 python Train.py -i FileNames.txt -o /path/to/output/MetaPaletteTrainingData/ -b /path/to/./bcalm -r /path/to/fast/IO/device/ -j /path/to/jellyfish -c /path/to./count_in_file -s 500 -t 48 -k 20
@@ -242,7 +242,7 @@ sudo umount -v /tmp/ramdisk
 
 Note that the time required to complete the training step can be considerable (depending on hardware available). Using 48 cores and 256GB of RAM, training on ~7,000 genomes can take a number of days.
 
-####Using Docker####
+#### Using Docker ####
 
 Alternatively, after creating the acceptable taxonomy, Docker can be used to form the training data. You will need to have access to a folder containing all the uncompressed training fasta/fastq files. You will also need to create a file (name it ``sample.fna.list``) that contains all the base names of the training fasta/fastq files, and put this in the same folder.
 
@@ -252,7 +252,7 @@ docker run --rm --privileged -e "DCKR_THREADS=48"  -e "RAM_DISK_SIZE=100G" -v /p
 ```
 The flag ``--privileged`` is required since docker will then be allowed to automatically create the RAM disk. Note the default RAM disk size is 10G (I suggest using around half the available RAM).
 
-####Run the ``Classify.py`` script####
+#### Run the ``Classify.py`` script ####
 You can now run the ``Classify.py`` script as before, but this time utilizing the directory ``MetaPaletteTrainingData`` for the option ``-d``.
 
 ## Contact ##
