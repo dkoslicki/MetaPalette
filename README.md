@@ -1,5 +1,9 @@
 # MetaPalette #
 
+**Please be aware: as far as metagenomic taxonomic profilers are concerned, you are probably better off using [Metalign](https://github.com/nlapier2/Metalign), [Sourmash](https://sourmash.readthedocs.io/en/latest/), or [mOTUs2](https://motu-tool.org/). MetaPalette has not been updated since 2016.**
+
+See the [CAMI](https://www.microbiome-cosi.org/) consortium and [associated paper](https://www.nature.com/articles/nmeth.4458) for benchmarking results of these and other tools.
+
 ## What is MetaPalette? ##
 MetaPalette is a k-mer based bacterial community reconstruction technique that utilizes sparsity promoting ideas from the field of compressed sensing to reconstruct the composition of a bacterial community. This method allows for strain-level abundance estimation, and can quantify the evolutionary distance between organisms in the sample and in the training database (thereby allowing for successful classification even with incomplete training data).
 
@@ -34,10 +38,16 @@ docker run --rm \
 ```
 The resulting profile, tree plots, and bar charts will be contained in ``~/MetaPalette/Tests/TestOutput``. Compare with the pre-computed results in ``~/MetaPalette/Tests/Output``.
 
-To run MetaPalette using one of the [pre-trained databases](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/), use the following:
+To run MetaPalette using one of the pre-trained databases:
+1. Archaea: https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+2. Bacteria: https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+3. Comparison (the training database used in the paper for comparison purposes): https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+4. Eukaryota: https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+5. Viruses: https://www.dropbox.com/s/eov2gaym47olz8y/Viruses.tar.gz
+use the following:
 ```bash
 cd ~
-wget http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/Bacteria.tar.gz #Or Archaea.tar.gz, Eukaryota.tar.gz, Viruses.tar.gz, Comparison.tar.gz (for the training database used in the paper for comparison purposes)
+wget <pre-trained file.tar.gz> #See above describing the location of this file
 tar -xf Bacteria.tar.gz 
 docker run --rm \
 -e "QUALITY=C" \
@@ -54,7 +64,12 @@ docker run --rm \
 ## How Do I Install MetaPalette? ##
 
 #### Training Data ####
-You can optionally download [pre-trained data](http://files.cgrb.oregonstate.edu/Koslicki_Lab/MetaPalette/). Pre-trained data for Archaea, Bacteria, Eukaryota, and viruses are included.
+You can optionally download pre-trained data. Pre-trained data for Archaea, Bacteria, Eukaryota, and viruses are included here:
+1. Archaea: https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+2. Bacteria: https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+3. Comparison (the training database used in the paper for comparison purposes): https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+4. Eukaryota: https://www.dropbox.com/s/6opzulllzd15ior/Archaea.tar.gz
+5. Viruses: https://www.dropbox.com/s/eov2gaym47olz8y/Viruses.tar.gz
 
 #### Build from source ####
 You will need the k-mer counting tool Jellyfish to be installed. Please see [the Jellyfish installation page](http://www.genome.umd.edu/jellyfish.html) for installation directions. Briefly, this can be installed using:
