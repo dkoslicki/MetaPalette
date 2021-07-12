@@ -271,7 +271,7 @@ The flag ``--privileged`` is required since docker will then be allowed to autom
 You can now run the ``Classify.py`` script as before, but this time utilizing the directory ``MetaPaletteTrainingData`` for the option ``-d``.
 
 ## Contact ##
-For issues with this software, contact david.koslicki@math.oregonstate.edu. Otherwise, submit an issue directly through Github.
+For issues with this software, contact ~~david.koslicki@math.oregonstate.edu~~ dmk333@psu.edu. Otherwise, submit an issue directly through Github.
 
 ## License ##
 This project is released under the GPL-3 License. Please view the [LICENSE](LICENSE)
